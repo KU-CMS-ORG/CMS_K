@@ -1,0 +1,35 @@
+{
+	"name": "cms_backend",
+	"version": "1.0.0",
+	"description": "canteen management system for KU",
+	"main": "app.js",
+	"scripts": {
+		"test": "npm test",
+		"dev": "nodemon app.js",
+		"start": "node app.js",
+		"build": "prisma generate && prisma migrate deploy"
+	},
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"babel-preset-es2015": "^6.24.1",
+		"nodemon": "^2.0.20",
+		"prisma": "^4.8.0"
+	},
+	"dependencies": {
+		"@koa/cors": "^4.0.0",
+		"@koa/router": "^12.0.0",
+		"@okta/jwt-verifier": "^1.0.0",
+		"@prisma/client": "^4.8.0",
+		"camelcase": "^7.0.1",
+		"koa": "^2.14.1",
+		"koa-body": "^6.0.1",
+		"koa-bodyparser": "^4.3.0",
+		"koa-mount-routes": "^1.0.1",
+		"koa-router": "^12.0.0",
+		"morgan": "^1.10.0",
+		"mssql": "^7.2.0",
+		"mysql": "^2.18.1",
+		"path": "^0.12.7"
+	}
+}

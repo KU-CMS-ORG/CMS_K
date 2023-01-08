@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model tblUser {
+  userId          String             @id @unique @db.VarChar(255)
+  fName           String             @db.VarChar(255)
+  mName           String             @db.VarChar(255)
+  lName           String             @db.VarChar(255)
+  email            String             @unique @db.VarChar(255)
+  password         String             @db.VarChar(255)
+  phone            String             @unique @db.VarChar(255)
+  countryCode     Int                @db.Int
+  role             String             @db.VarChar(255)
+  faculty          String             @db.VarChar(255)
+  userStatus      String             @db.VarChar(255)
+  tblCrendentials tblCrendentials[]
+  tblTranhistory tblTranhistory[]
+  tblPayment      tblPayment[]
+}
+
+model tblCrendentials {
+  credId    Int      @id @default(autoincrement())
+  user       tblUser @relation(fields: [userId], references: [userId])
+  userId    String   @db.VarChar(255)
+  email      String   @unique @db.VarChar(255)
+  phone      Int      @unique @db.Int
+  password   String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model tblFood {
+  foodId          Int                @id @default(autoincrement())
+  foodName        String             @db.VarChar(255)
+  foodCategory    String             @db.VarChar(255)
+  price            Decimal
+  desc             String             @db.VarChar(255)
+  quantity         Int
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  tblMenu         tblMenu[]
+  tblTranhistory tblTranhistory[]
+}
+
+enum days {
+  Sunday
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+}
+
+model tblMenu {
+  menuId        Int      @id @default(autoincrement())
+  food           tblFood @relation(fields: [foodId], references: [foodId])
+  foodId        Int
+  isAvailable   Boolean
+  createdAtday days
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model tblTranhistory {
+  tranId        Int          @id @default(autoincrement())
+  user           tblUser     @relation(fields: [userId], references: [userId])
+  userId        String       @db.VarChar(255)
+  food           tblFood     @relation(fields: [foodId], references: [foodId])
+  foodId        Int
+  tranDate      DateTime     @default(now())
+  checkoutPrice Decimal
+  tranDesc      String       @db.VarChar(255)
+  quantity       Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  tblPayment    tblPayment?
+}
+
+model tblPayment {
+  paymentId     Int              @id @default(autoincrement())
+  user           tblUser         @relation(fields: [userId], references: [userId])
+  userId        String           @db.VarChar(255)
+  tran           tblTranhistory @relation(fields: [tranId], references: [tranId])
+  tranId        Int              @unique
+  tranDate      DateTime         @default(now())
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  paymentMethod String           @db.VarChar(255)
+  paidStatus    String           @db.VarChar(255)
+}
