@@ -8,10 +8,9 @@ async function findOne() {
 
 async function findAll() {
     try {
-        
     } catch (error) {
         throw error;
     }
 }
 
-module.exports = {findOne, findAll};
+module.exports = { findOne, findAll };
