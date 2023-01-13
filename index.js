@@ -1,17 +1,16 @@
 const Koa = require("koa");
 
 const { koaBody } = require("koa-body");
-
-const rootRouter = require("./controllers/user");
+const rootRouter = require("./routes/index.route");
 const DB = require("./db");
 DB();
 
 //Route files
 const app = new Koa();
+const PORT = 3000;
 app.use(koaBody());
-app.use(rootRouter.routes());
-app.use(rootRouter.allowedMethods());
+app.use(rootRouter);
 
-app.listen(3000, () => {
-	console.log("Server running at: http://localhost:3000");
+app.listen(PORT, () => {
+	console.log("Server running at: http://localhost:" + PORT);
 });
