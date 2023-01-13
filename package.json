@@ -5,8 +5,8 @@
 	"main": "app.js",
 	"scripts": {
 		"test": "npm test",
-		"dev": "nodemon app.js",
-		"start": "node app.js",
+		"dev": "nodemon index.js",
+		"start": "node index.js",
 		"build": "prisma generate && prisma migrate deploy"
 	},
 	"author": "",
