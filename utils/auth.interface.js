@@ -18,6 +18,8 @@ const signUpSchema = {
             firstName: Joi.string().required(),
             middleName: Joi.string().required(),
             lastName: Joi.string().required(),
+            phone: Joi.number().required(),
+            password: Joi.string().required(),
         })
         .required(),
 };
