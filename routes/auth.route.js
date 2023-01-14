@@ -5,12 +5,22 @@ const {
     changePassword,
     forgotPassword,
 } = require("../controllers/auth.controller");
+const schemaValidate = require("../utils/schema.validation");
+const authSchema = require("../utils/auth.interface");
 
 const router = new Router();
 
-router.post("/register", signup);
-router.post("/login", signin);
-router.post("/change-password", changePassword);
-router.post("/forgot-password", forgotPassword);
+router.post("/register", schemaValidate(authSchema.signUpSchema), signup);
+router.post("/login", schemaValidate(authSchema.signInSchema), signin);
+router.post(
+    "/change-password",
+    schemaValidate(authSchema.changePasswordSchema),
+    changePassword
+);
+router.post(
+    "/forgot-password",
+    schemaValidate(authSchema.changePasswordSchema),
+    forgotPassword
+);
 
 module.exports = router.routes();

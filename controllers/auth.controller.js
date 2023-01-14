@@ -6,13 +6,14 @@ async function signup(ctx, next) {
     try {
         const { firstName, lastName, middleName, email, phone } =
             ctx.request.body;
-        const response = await authService.signup({
-            firstName,
-            lastName,
-            middleName,
-            email,
-            phone,
-        });
+        console.log(firstName, lastName, middleName, email, phone);
+        // const response = await authService.signup({
+        //     firstName,
+        //     lastName,
+        //     middleName,
+        //     email,
+        //     phone,
+        // });
         console.log(ctx.body);
         return (ctx.body = "Hello world");
         //check if user already exists, if not add new user, if yes return message saying email or id already exists
