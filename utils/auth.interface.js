@@ -1,6 +1,8 @@
 const Joi = require("joi");
 
 const signInSchema = {
+    params: {},
+    query: {},
     body: Joi.object().keys({
         email: Joi.string().email().required(),
         password: Joi.string().required(),
@@ -21,12 +23,16 @@ const signUpSchema = {
 };
 
 const forgotPasswordSchema = {
+    params: {},
+    query: {},
     body: Joi.object().keys({
         email: Joi.string().email().required(),
     }),
 };
 
 const changePasswordSchema = {
+    params: {},
+    query: {},
     body: Joi.object().keys({
         oldPassword: Joi.string().required(),
         newPassword: Joi.string().required(),
