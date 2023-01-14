@@ -1,3 +1,5 @@
+const { PrismaClient, Prisma } = require("@prisma/client");
+
 async function findOne() {
     try {
         // find one user and return it
