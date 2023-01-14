@@ -10,7 +10,7 @@ const emailService = require("./email.service");
 const prisma = new PrismaClient();
 /**
  * service to create new user
- * @param {{firstName: String, lastName: String, middleName: String, email: String, phone: Number}} userDetails
+ * @param {{firstName: String, lastName: String, middleName: String, email: String, phone: Number, password: String}} userDetails
  */
 async function signup(userDetails) {
     try {
@@ -23,13 +23,11 @@ async function signup(userDetails) {
                 "email already exists. Please try again with a new email address."
             );
         }
-        const password = generatePassword();
         const newUser = await prisma.tblUser.create({
             ...userDetails,
-            password: encryptPassword(password),
+            password: encryptPassword(userDetails.password),
         });
         // create email with new user's credentials
-        emailService.sendSignupEmail({ sender: "", receiver: "" });
         return newUser;
     } catch (error) {
         throw error;
