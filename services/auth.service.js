@@ -10,7 +10,7 @@ const emailService = require("./email.service");
 const prisma = new PrismaClient();
 /**
  * service to create new user
- * @param {{firstName: String, lastName: String, middleName: String, email: String, phone: Number, password: String}} userDetails
+ * @param {{email: String, rollId: String, password: String}} userDetails
  */
 async function signup(userDetails) {
     try {
@@ -62,8 +62,8 @@ async function signin(userDetails) {
 }
 
 /**
- * forgot password service, sends email with new password if address exists
- * @param {{email: String}} userDetails
+ * forgot password service, changes the password and returns new password
+ * @param {{id: String}} userDetails
  * @returns
  */
 async function forgotPassword(userDetails) {
@@ -72,15 +72,13 @@ async function forgotPassword(userDetails) {
         const password = generatePassword();
         const updatedUser = await prisma.user.update({
             where: {
-                email: userDetails.email,
+                id: userDetails.id,
             },
             data: {
-                password,
+                password: encryptPassword(password),
             },
         });
-        // send email with updated password
-        emailService.sendForgotPasswordEmail("", "");
-        return updatedUser;
+        return { password };
     } catch (error) {
         throw error;
     }
