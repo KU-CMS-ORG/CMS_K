@@ -4,14 +4,9 @@ const authService = require("../services/auth.service");
  */
 async function signup(ctx, next) {
     try {
-        const { firstName, lastName, middleName, email, phone, password } =
-            ctx.request.body;
+        const { email, password, rollId } = ctx.request.body;
         const response = await authService.signup({
-            firstName,
-            lastName,
-            middleName,
             email,
-            phone,
             password,
         });
         return (ctx.body = "User created successfully");
@@ -40,11 +35,10 @@ async function signin(ctx, next) {
  */
 async function forgotPassword(ctx, next) {
     try {
-        const { email } = ctx.request.body;
+        const { id } = ctx.request.body;
         // send email with new password after updating db with random password or a password reset link, response must say if your email exists, we have sent you an email, check inbox or spam.
-        const response = await authService.forgotPassword({ email });
-        return (ctx.body =
-            "An email has been sent to the email address you provided, please check your inbox or spam");
+        const response = await authService.forgotPassword({ id });
+        return (ctx.body = response);
     } catch (err) {
         ctx.status = err.statusCode || err.status || 500;
         ctx.body = {

@@ -3,7 +3,7 @@ const Koa = require("koa");
 const { koaBody } = require("koa-body");
 const rootRouter = require("./routes/index.route");
 const DB = require("./db");
-const { changePasswordSchema } = require("./utils/auth.interface");
+const { changePasswordSchema } = require("./utils/interfaces/auth.interface");
 const schemaValidate = require("./utils/schema.validation");
 DB();
 

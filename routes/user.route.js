@@ -6,7 +6,7 @@ const {
     forgotPassword,
 } = require("../controllers/auth.controller");
 const schemaValidate = require("../utils/schema.validation");
-const userSchema = require("../utils/user.interface");
+const userSchema = require("../utils/interfaces/user.interface");
 
 const router = new Router();
 
