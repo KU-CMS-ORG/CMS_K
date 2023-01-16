@@ -5,5 +5,4 @@ const foodRoute = require("./food.route");
 const router = new Router();
 router.use("/auth", authRoute);
 router.use("/food", foodRoute);
-
 module.exports = router.routes();

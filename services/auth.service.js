@@ -1,4 +1,5 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
+const { OAuth2Client } = require("google-auth-library");
 const {
     encryptPassword,
     generatePassword,
@@ -6,11 +7,73 @@ const {
 } = require("../utils/passwordGenerator");
 const jwtService = require("./jwt.service");
 const emailService = require("./email.service");
+const config = require("../utils/config");
 
 const prisma = new PrismaClient();
+
+const googleClientId = config.googleClientId;
+const googleClientSecret = config.googleClientSecret;
+const client = new OAuth2Client(googleClientId, googleClientSecret);
+
+/**
+ * verifies the token with google
+ * @param {*} token
+ * @returns
+ */
+async function verifyGoogleToken(token) {
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: googleClientId,
+        });
+        return { payload: ticket.getPayload() };
+    } catch (error) {
+        return { error: "Invalid user detected. Please try again" };
+    }
+}
+
+/**
+ * signup user with google authentication
+ * @param {*} credentails
+ * @returns
+ */
+async function googleSignup(credentails) {
+    try {
+        const verificationResponse = await verifyGoogleToken(
+            req.body.credential
+        );
+
+        if (verificationResponse.error) {
+            throw new Error(verificationResponse.error);
+        }
+
+        const profile = verificationResponse?.payload;
+
+        console.log(profile);
+        const newUser = await prisma.tblUser.create({
+            data: {
+                fName: profile.given_name,
+                lName: profile.given_name,
+            },
+            tblCredentials: {
+                create: [{ email: profile.email }],
+            },
+            include: {
+                tblCrendentials: true,
+            },
+        });
+        // create email with new user's credentials
+        return {
+            user: newUser,
+            token: jwtService.createToken(newUser),
+        };
+    } catch (error) {
+        throw error;
+    }
+}
 /**
  * service to create new user
- * @param {{email: String, rollId: String, password: String}} userDetails
+ * @param {{email: String, password: String}} userDetails
  */
 async function signup(userDetails) {
     try {
@@ -24,11 +87,50 @@ async function signup(userDetails) {
             );
         }
         const newUser = await prisma.tblUser.create({
-            ...userDetails,
-            password: encryptPassword(userDetails.password),
+            data: {},
+            include: { tblCrendentials: true },
+            tblCredentials: {
+                create: [
+                    {
+                        password: encryptPassword(userDetails.password),
+                        email: userDetails.email,
+                    },
+                ],
+            },
         });
         // create email with new user's credentials
-        return newUser;
+        return {
+            user: newUser,
+            token: jwtService.createToken(newUser),
+        };
+    } catch (error) {
+        throw error;
+    }
+}
+
+/**
+ * login with google credentails
+ * @param {*} credentials
+ * @returns
+ */
+async function googleSignin(credentials) {
+    try {
+        const verificationResponse = await verifyGoogleToken(credentials);
+        if (verificationResponse.error) {
+            throw new Error(verificationResponse.error);
+        }
+        const profile = verificationResponse?.payload;
+        const existingUser = await prisma.tblUser.findUnique({
+            where: { tblCredentials: { email: profile.email } },
+            include: { tblCrendentials: true },
+        });
+        if (!existingUser) {
+            throw new Error("user does not exist");
+        }
+        return {
+            user: existingUser,
+            token: jwtService.createToken(existingUser),
+        };
     } catch (error) {
         throw error;
     }
@@ -42,12 +144,19 @@ async function signup(userDetails) {
 async function signin(userDetails) {
     try {
         const existingUser = await prisma.tblUser.findUnique({
-            where: { email: userDetails.email },
+            where: { tblCredentials: { email: userDetails.email } },
+            include: { tblCrendentials: true },
         });
         if (!existingUser) {
             throw new Error("user does not exist");
         }
-        if (comparePassword(userDetails.password, existingUser.password)) {
+
+        if (
+            comparePassword(
+                userDetails.password,
+                existingUser.tblCrendentials.password
+            )
+        ) {
             //generate jwt and login
             return {
                 user: existingUser,
@@ -114,4 +223,11 @@ async function changePassword(userDetails) {
     }
 }
 
-module.exports = { signin, changePassword, signup, forgotPassword };
+module.exports = {
+    signin,
+    changePassword,
+    signup,
+    forgotPassword,
+    googleSignin,
+    googleSignup,
+};
