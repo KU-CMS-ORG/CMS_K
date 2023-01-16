@@ -12,17 +12,15 @@ datasource db {
 
 model tblUser {
   userId          String             @id @unique @db.VarChar(255)
-  fName           String             @db.VarChar(255)
-  mName           String             @db.VarChar(255)
-  lName           String             @db.VarChar(255)
-  email            String             @unique @db.VarChar(255)
-  password         String             @db.VarChar(255)
+  firstName           String             @db.VarChar(255)
+  middleName           String             @db.VarChar(255)
+  lastName           String             @db.VarChar(255)
   phone            String             @unique @db.VarChar(255)
   countryCode     Int                @db.Int
   role             String             @db.VarChar(255)
   faculty          String             @db.VarChar(255)
   userStatus      String             @db.VarChar(255)
-  tblCrendentials tblCrendentials[]
+  tblCrendentials tblCrendentials?
   tblTranhistory tblTranhistory[]
   tblPayment      tblPayment[]
 }
@@ -30,9 +28,8 @@ model tblUser {
 model tblCrendentials {
   credId    Int      @id @default(autoincrement())
   user       tblUser @relation(fields: [userId], references: [userId])
-  userId    String   @db.VarChar(255)
+  userId    String   @unique @db.VarChar(255)
   email      String   @unique @db.VarChar(255)
-  phone      Int      @unique @db.Int
   password   String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
