@@ -5,13 +5,15 @@ const rootRouter = require("./routes/index.route");
 const DB = require("./db");
 const { changePasswordSchema } = require("./utils/interfaces/auth.interface");
 const schemaValidate = require("./utils/schema.validation");
+const config = require("./utils/config");
 DB();
 
 //Route files
 const app = new Koa();
-const PORT = 3000;
+const PORT = config.port;
 app.use(koaBody());
 app.use(rootRouter);
+
 console.log(
     schemaValidate(changePasswordSchema, {
         oldPassword: "134",

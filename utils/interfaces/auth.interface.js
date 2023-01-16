@@ -4,6 +4,7 @@ const signInSchema = {
     params: {},
     query: {},
     body: Joi.object().keys({
+        credential: Joi.any().optional(),
         email: Joi.string().email().required(),
         password: Joi.string().required(),
     }),
@@ -14,6 +15,7 @@ const signUpSchema = {
     query: {},
     body: Joi.object()
         .keys({
+            credential: Joi.any().optional(),
             email: Joi.string().email().required(),
             password: Joi.string().required(),
         })

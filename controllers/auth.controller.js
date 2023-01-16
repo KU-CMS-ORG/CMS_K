@@ -4,12 +4,17 @@ const authService = require("../services/auth.service");
  */
 async function signup(ctx, next) {
     try {
-        const { email, password, rollId } = ctx.request.body;
-        const response = await authService.signup({
-            email,
-            password,
-        });
-        return (ctx.body = "User created successfully");
+        const credential = ctx.request.body.credential;
+        if (credential) {
+            return (ctx.body = await authService.googleSignup());
+        } else {
+            const { email, password } = ctx.request.body;
+            const response = await authService.signup({
+                email,
+                password,
+            });
+            return (ctx.body = response);
+        }
         //check if user already exists, if not add new user, if yes return message saying email or id already exists
     } catch (err) {
         throw err;
@@ -21,9 +26,15 @@ async function signup(ctx, next) {
  */
 async function signin(ctx, next) {
     try {
-        const { email, password } = ctx.request.body;
-        const response = await authService.signin({ email, password });
-        return (ctx.body = response);
+        const credential = ctx.request.body.credential;
+        if (credential) {
+            return (ctx.body = await authService.googleSignin(credential));
+        } else {
+            const { email, password } = ctx.request.body;
+            const response = await authService.signin({ email, password });
+            return (ctx.body = response);
+        }
+
         // check if user already exists, if exists check password, if password matches send token, if not password don't match message, if not user don't exist, signup
     } catch (err) {
         throw err;
