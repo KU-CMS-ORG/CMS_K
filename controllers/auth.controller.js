@@ -61,11 +61,15 @@ async function forgotPassword(ctx, next) {
 /**
  * updates password if old passwords match
  */
-async function changePassword() {
+async function changePassword(ctx, next) {
     try {
-        const { oldPassword, newPassword } = ctx.request.body;
+        const { oldPassword, newPassword, userId } = ctx.request.body;
         // check if old password match, if not say old password don't match, else update with new password
-        const response = authService.changePassword(oldPassword, newPassword);
+        const response = authService.changePassword({
+            userId,
+            oldPassword,
+            newPassword,
+        });
         return (ctx.body = "password updated successfully");
     } catch (err) {
         ctx.status = err.statusCode || err.status || 500;

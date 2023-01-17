@@ -1,5 +1,23 @@
-const ROLES = ["admin", "super-admin", "user"];
+const ROLES = {
+    admin: "admin",
+    "super-admin": "super-admin",
+    user: "super-admin",
+};
+const FACULTY = { ai: "AI" };
 const PAYMENT_TYPES = ["cash", "esewa"];
-const USER_STATUS = ["active", "closed", "inactive"];
+const USER_STATUS = {
+    active: "active",
+    closed: "closed",
+    inactive: "inactive",
+};
 const FOOD_CATEGORY = ["breakfast", "lunch", "dinner", "beverages", "others"];
 const PAYMENT_STATUS = ["pending", "paid"];
+
+module.exports = {
+    ROLES,
+    USER_STATUS,
+    PAYMENT_STATUS,
+    FOOD_CATEGORY,
+    PAYMENT_TYPES,
+    FACULTY,
+};
