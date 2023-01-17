@@ -8,44 +8,71 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum Faculty {
+  AI
+  AGRICULTURE
+  ADMINISTRATION
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  CLOSED
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  USER
 }
 
 model tblUser {
-  userId          String             @id @unique @db.VarChar(255)
-  firstName           String             @db.VarChar(255)
-  middleName           String             @db.VarChar(255)
-  lastName           String             @db.VarChar(255)
-  phone            String             @unique @db.VarChar(255)
-  countryCode     Int                @db.Int
-  role             String             @db.VarChar(255)
-  faculty          String             @db.VarChar(255)
-  userStatus      String             @db.VarChar(255)
-  tblCrendentials tblCrendentials?
-  tblTranhistory tblTranhistory[]
+  userId          String             @id @unique  @db.VarChar(36)
+  firstName           String?             @db.VarChar(100)
+  middleName           String?             @db.VarChar(100)
+  lastName           String?             @db.VarChar(100)
+  phone            String?             @unique @db.VarChar(10)
+  countryCode     Int?                @db.Int
+  role             Role             @default(USER)
+  rollId             String?             @db.VarChar(15)
+  faculty          Faculty?            
+  userStatus      UserStatus           @default(ACTIVE) 
+  credential tblCredential?
+  tblTranHistory tblTranHistory[]
   tblPayment      tblPayment[]
 }
 
-model tblCrendentials {
+model tblCredential {
   credId    Int      @id @default(autoincrement())
   user       tblUser @relation(fields: [userId], references: [userId])
-  userId    String   @unique @db.VarChar(255)
-  email      String   @unique @db.VarChar(255)
-  password   String   @db.VarChar(255)
+  userId    String   @unique @db.VarChar(36)
+  email      String   @unique @db.VarChar(100)
+  password   String?   @db.VarChar(255) 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum FoodCategory {
+  meal
+  lunch
+  beverages
+  others
 }
 
 model tblFood {
   foodId          Int                @id @default(autoincrement())
   foodName        String             @db.VarChar(255)
-  foodCategory    String             @db.VarChar(255)
+  foodCategory    FoodCategory       
   price            Decimal
-  desc             String             @db.VarChar(255)
-  quantity         Int
+  desc             String?             @db.VarChar(255)
+  quantity         Int  @default(1)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   tblMenu         tblMenu[]
-  tblTranhistory tblTranhistory[]
+  tblTranHistory tblTranHistory[]
 }
 
 enum days {
@@ -63,12 +90,14 @@ model tblMenu {
   food           tblFood @relation(fields: [foodId], references: [foodId])
   foodId        Int
   isAvailable   Boolean
-  createdAtday days
+  createdAtDay days
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([foodId])
 }
 
-model tblTranhistory {
+model tblTranHistory {
   tranId        Int          @id @default(autoincrement())
   user           tblUser     @relation(fields: [userId], references: [userId])
   userId        String       @db.VarChar(255)
@@ -81,17 +110,22 @@ model tblTranhistory {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   tblPayment    tblPayment?
+
+  @@index([userId])
+  @@index([foodId])
 }
 
 model tblPayment {
   paymentId     Int              @id @default(autoincrement())
   user           tblUser         @relation(fields: [userId], references: [userId])
   userId        String           @db.VarChar(255)
-  tran           tblTranhistory @relation(fields: [tranId], references: [tranId])
+  tran           tblTranHistory @relation(fields: [tranId], references: [tranId])
   tranId        Int              @unique
   tranDate      DateTime         @default(now())
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   paymentMethod String           @db.VarChar(255)
   paidStatus    String           @db.VarChar(255)
+
+  @@index([userId])
 }
