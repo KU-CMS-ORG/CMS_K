@@ -7,7 +7,8 @@
         "test": "npm test",
         "dev": "nodemon index.js",
         "start": "node index.js",
-        "build": "prisma generate && prisma migrate deploy",
+        "db:push": "npx prisma db push",
+        "db:build": "prisma generate && prisma migrate deploy",
         "lint:fix": "npx prettier --write .",
         "prepare": "husky install"
     },
@@ -39,7 +40,8 @@
         "morgan": "^1.10.0",
         "mssql": "^7.2.0",
         "mysql": "^2.18.1",
-        "path": "^0.12.7"
+        "path": "^0.12.7",
+        "uuid": "^9.0.0"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
