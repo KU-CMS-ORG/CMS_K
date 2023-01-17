@@ -20,7 +20,7 @@
 		"@koa/cors": "^4.0.0",
 		"@koa/router": "^12.0.0",
 		"@okta/jwt-verifier": "^1.0.0",
-		"@prisma/client": "^4.8.0",
+		"@prisma/client": "^4.8.1",
 		"camelcase": "^7.0.1",
 		"koa": "^2.14.1",
 		"koa-body": "^6.0.1",
