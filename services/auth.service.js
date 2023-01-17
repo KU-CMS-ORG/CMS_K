@@ -8,6 +8,8 @@ const {
 const jwtService = require("./jwt.service");
 const emailService = require("./email.service");
 const config = require("../utils/config");
+const { ROLES, FACULTY, USER_STATUS } = require("../constants/app.constants");
+const { v4: uuidv4 } = require("uuid");
 
 const prisma = new PrismaClient();
 
@@ -34,14 +36,12 @@ async function verifyGoogleToken(token) {
 
 /**
  * signup user with google authentication
- * @param {*} credentails
+ * @param {*} cred
  * @returns
  */
-async function googleSignup(credentails) {
+async function googleSignup(cred) {
     try {
-        const verificationResponse = await verifyGoogleToken(
-            req.body.credential
-        );
+        const verificationResponse = await verifyGoogleToken(cred);
 
         if (verificationResponse.error) {
             throw new Error(verificationResponse.error);
@@ -49,17 +49,18 @@ async function googleSignup(credentails) {
 
         const profile = verificationResponse?.payload;
 
-        console.log(profile);
         const newUser = await prisma.tblUser.create({
             data: {
-                fName: profile.given_name,
-                lName: profile.given_name,
+                firstName: profile.given_name,
+                lastName: profile.given_name,
+                role: ROLES.user,
+                userStatus: USER_STATUS.active,
             },
-            tblCredentials: {
+            credential: {
                 create: [{ email: profile.email }],
             },
             include: {
-                tblCrendentials: true,
+                credential: true,
             },
         });
         // create email with new user's credentials
@@ -78,25 +79,30 @@ async function googleSignup(credentails) {
 async function signup(userDetails) {
     try {
         // add user logic
-        const existingUser = await prisma.tblUser.findUnique({
+        const existingUser = await prisma.tblCredential.findUnique({
             where: { email: userDetails.email },
+            include: {
+                user: true,
+            },
         });
+        console.log(existingUser, userDetails);
         if (existingUser) {
             throw new Error(
                 "email already exists. Please try again with a new email address."
             );
         }
+
         const newUser = await prisma.tblUser.create({
-            data: {},
-            include: { tblCrendentials: true },
-            tblCredentials: {
-                create: [
-                    {
+            data: {
+                userId: uuidv4(),
+                credential: {
+                    create: {
                         password: encryptPassword(userDetails.password),
                         email: userDetails.email,
                     },
-                ],
+                },
             },
+            include: { credential: true },
         });
         // create email with new user's credentials
         return {
@@ -121,8 +127,12 @@ async function googleSignin(credentials) {
         }
         const profile = verificationResponse?.payload;
         const existingUser = await prisma.tblUser.findUnique({
-            where: { tblCredentials: { email: profile.email } },
-            include: { tblCrendentials: true },
+            where: { credential: { email: profile.email } },
+            include: {
+                credential: {
+                    select: { email: true, password: true, createdAt: true },
+                },
+            },
         });
         if (!existingUser) {
             throw new Error("user does not exist");
@@ -143,23 +153,22 @@ async function googleSignin(credentials) {
  */
 async function signin(userDetails) {
     try {
-        const existingUser = await prisma.tblUser.findUnique({
-            where: { tblCredentials: { email: userDetails.email } },
-            include: { tblCrendentials: true },
+        const existingUser = await prisma.tblCredential.findUnique({
+            where: { email: userDetails.email },
+            include: {
+                user: true,
+            },
         });
         if (!existingUser) {
             throw new Error("user does not exist");
         }
-
-        if (
-            comparePassword(
-                userDetails.password,
-                existingUser.tblCrendentials.password
-            )
-        ) {
+        if (comparePassword(userDetails.password, existingUser.password)) {
             //generate jwt and login
             return {
-                user: existingUser,
+                user: {
+                    ...existingUser.user,
+                    createdAt: existingUser.createdAt,
+                },
                 token: jwtService.createToken(existingUser),
             };
         } else {
@@ -179,9 +188,9 @@ async function forgotPassword(userDetails) {
     try {
         //generate random Password
         const password = generatePassword();
-        const updatedUser = await prisma.user.update({
+        const updatedUser = await prisma.tblCredential.update({
             where: {
-                id: userDetails.id,
+                userId: userDetails.id,
             },
             data: {
                 password: encryptPassword(password),
@@ -195,22 +204,22 @@ async function forgotPassword(userDetails) {
 
 /**
  * updates new password if old one matches
- * @param {{oldPassword: String, newPassword: String}} userDetails
+ * @param {{userId: String,oldPassword: String, newPassword: String}} userDetails
  * @returns
  */
 async function changePassword(userDetails) {
     try {
-        const existingUser = await prisma.tblUser.findUnique({
-            where: { email: userDetails.email },
+        const existingUser = await prisma.tblCredential.findUnique({
+            where: { userId: userDetails.userId },
         });
 
         if (!comparePassword(userDetails.password, existingUser.password)) {
             throw new Error("old password does not match");
         }
 
-        const updatedUser = await prisma.user.update({
+        const updatedUser = await prisma.tblCredential.update({
             where: {
-                email: userDetails.email,
+                userId: userDetails.userId,
             },
             data: {
                 password: encryptPassword(userDetails.newPassword),

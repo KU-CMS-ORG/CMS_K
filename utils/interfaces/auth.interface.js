@@ -34,6 +34,7 @@ const changePasswordSchema = {
     params: {},
     query: {},
     body: Joi.object().keys({
+        userId: Joi.string().required().guid(),
         oldPassword: Joi.string().required(),
         newPassword: Joi.string().required(),
     }),

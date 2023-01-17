@@ -12,7 +12,7 @@ const router = new Router();
 
 router.post("/register", schemaValidate(authSchema.signUpSchema), signup);
 router.post("/login", schemaValidate(authSchema.signInSchema), signin);
-router.post(
+router.patch(
     "/change-password",
     schemaValidate(authSchema.changePasswordSchema),
     changePassword
