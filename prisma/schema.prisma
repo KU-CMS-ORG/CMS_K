@@ -56,10 +56,10 @@ model tblCredential {
 }
 
 enum FoodCategory {
-  meal
-  lunch
-  beverages
-  others
+  MEAL
+  LUNCH
+  BEVERAGE
+  OTHER
 }
 
 model tblFood {
@@ -75,14 +75,14 @@ model tblFood {
   tblTranHistory tblTranHistory[]
 }
 
-enum days {
-  Sunday
-  Monday
-  Tuesday
-  Wednesday
-  Thursday
-  Friday
-  Saturday
+enum Days {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
 }
 
 model tblMenu {
@@ -90,7 +90,7 @@ model tblMenu {
   food           tblFood @relation(fields: [foodId], references: [foodId])
   foodId        Int
   isAvailable   Boolean
-  createdAtDay days
+  createdAtDay Days
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -115,6 +115,15 @@ model tblTranHistory {
   @@index([foodId])
 }
 
+enum PaymentMethod {
+  CASH
+  ESEWA
+}
+
+enum PaidStatus {
+  PAID
+  PENDING
+}
 model tblPayment {
   paymentId     Int              @id @default(autoincrement())
   user           tblUser         @relation(fields: [userId], references: [userId])
@@ -124,8 +133,8 @@ model tblPayment {
   tranDate      DateTime         @default(now())
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
-  paymentMethod String           @db.VarChar(255)
-  paidStatus    String           @db.VarChar(255)
+  paymentMethod PaymentMethod?   
+  paidStatus    PaidStatus       @default(PENDING)
 
   @@index([userId])
 }

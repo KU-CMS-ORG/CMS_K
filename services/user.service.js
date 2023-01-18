@@ -2,8 +2,8 @@ const { PrismaClient, Prisma, UserStatus, Role } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 /**
- *
- * @param {{userId?:String, email?: String}} where
+ *get detail of user by id or email
+ * @param {{userId?:String, email?: String}} whereKey
  * @returns
  */
 async function findDetail(whereKey) {
@@ -84,7 +84,6 @@ async function deleteUser(whereKey) {
  */
 async function updateUser(whereKey, userDetails) {
     try {
-        console.log(userDetails);
         const { email, ...rest } = userDetails;
         let credentialUpdate = undefined;
         if (email) {
