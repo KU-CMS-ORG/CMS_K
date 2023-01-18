@@ -40,7 +40,7 @@ async function updateUserDetail(ctx, next) {
         const params = ctx.request.params;
         const {
             firstName,
-            midddleName,
+            middleName,
             lastName,
             email,
             faculty,
@@ -51,7 +51,7 @@ async function updateUserDetail(ctx, next) {
         const updateBody = {
             ...(email && { email }),
             ...(firstName && { firstName }),
-            ...(midddleName && { midddleName }),
+            ...(middleName && { middleName }),
             ...(lastName && { lastName }),
             ...(faculty && { faculty }),
             ...(rollId && { rollId }),
