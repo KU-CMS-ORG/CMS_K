@@ -10,6 +10,7 @@ const emailService = require("./email.service");
 const config = require("../utils/config");
 const { ROLES, FACULTY, USER_STATUS } = require("../constants/app.constants");
 const { v4: uuidv4 } = require("uuid");
+const ApiError = require("../utils/errorHandler");
 
 const prisma = new PrismaClient();
 
@@ -87,9 +88,11 @@ async function signup(userDetails) {
         });
         console.log(existingUser, userDetails);
         if (existingUser) {
-            throw new Error(
-                "email already exists. Please try again with a new email address."
-            );
+            throw new ApiError({
+                message:
+                    "Email already exists. Please try again with a new email address.",
+                statusCode: 401,
+            });
         }
 
         const newUser = await prisma.tblUser.create({
