@@ -11,6 +11,7 @@ const config = require("../utils/config");
 const { ROLES, FACULTY, USER_STATUS } = require("../constants/app.constants");
 const { v4: uuidv4 } = require("uuid");
 const ApiError = require("../utils/errorHandler");
+const status = require("http-status");
 
 const prisma = new PrismaClient();
 
@@ -91,7 +92,7 @@ async function signup(userDetails) {
             throw new ApiError({
                 message:
                     "Email already exists. Please try again with a new email address.",
-                statusCode: 401,
+                statusCode: status.CONFLICT,
             });
         }
 
@@ -138,7 +139,10 @@ async function googleSignin(credentials) {
             },
         });
         if (!existingUser) {
-            throw new Error("user does not exist");
+            throw new ApiError({
+                message: "User does not exist",
+                statusCode: status.NOT_FOUND,
+            });
         }
         return {
             user: existingUser,
@@ -163,7 +167,10 @@ async function signin(userDetails) {
             },
         });
         if (!existingUser) {
-            throw new Error("user does not exist");
+            throw new ApiError({
+                message: "User not found",
+                statusCode: status.NOT_FOUND,
+            });
         }
         if (comparePassword(userDetails.password, existingUser.password)) {
             //generate jwt and login
@@ -175,7 +182,10 @@ async function signin(userDetails) {
                 token: jwtService.createToken(existingUser),
             };
         } else {
-            throw new Error("password does not match");
+            throw new ApiError({
+                message: "Password does not match",
+                statusCode: status.UNAUTHORIZED,
+            });
         }
     } catch (error) {
         throw error;
@@ -217,7 +227,10 @@ async function changePassword(userDetails) {
         });
 
         if (!comparePassword(userDetails.password, existingUser.password)) {
-            throw new Error("old password does not match");
+            throw new ApiError({
+                message: "old password does not match",
+                statusCode: status.UNAUTHORIZED,
+            });
         }
 
         const updatedUser = await prisma.tblCredential.update({
