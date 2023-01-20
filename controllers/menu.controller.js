@@ -22,6 +22,22 @@ async function fetchAllMenus(ctx, next) {
 }
 
 /**
+ * fetches details of a given specific menu
+ * @param {*} ctx
+ * @param {*} next
+ * @returns
+ */
+async function fetchMenuDetails(ctx, next) {
+    try {
+        const { id } = ctx.request.params;
+        const response = await menuService.findDetail({ menuId: +id });
+        return (ctx.body = response);
+    } catch (error) {
+        throw error;
+    }
+}
+
+/**
  * creates a new menu item
  * @param {*} ctx
  * @param {*} next
@@ -45,4 +61,4 @@ async function createMenu(ctx, next) {
     }
 }
 
-module.exports = { createMenu, fetchAllMenus };
+module.exports = { createMenu, fetchAllMenus, fetchMenuDetails };

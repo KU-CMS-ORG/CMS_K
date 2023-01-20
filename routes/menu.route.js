@@ -10,6 +10,12 @@ router.post(
     menuController.createMenu
 );
 router.get(
+    "/:id",
+    schemaValidate(menuSchema.menuDetailSchema),
+    menuController.fetchMenuDetails
+);
+
+router.get(
     "/",
     schemaValidate(menuSchema.menusListSchema),
     menuController.fetchAllMenus
