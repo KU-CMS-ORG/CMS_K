@@ -71,7 +71,7 @@ model tblFood {
   quantity         Int  @default(1)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
-  tblMenu         tblMenu[]
+  tblMenu         tblFoodOnMenu[]
   tblTranHistory tblTranHistory[]
 }
 
@@ -87,13 +87,21 @@ enum Days {
 
 model tblMenu {
   menuId        Int      @id @default(autoincrement())
-  food           tblFood @relation(fields: [foodId], references: [foodId])
-  foodId        Int
   isAvailable   Boolean
   createdAtDay Days
+  menuFor DateTime @default(now()) @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  foods tblFoodOnMenu[]
+}
 
+model tblFoodOnMenu {
+  menu tblMenu @relation(fields: [menuId], references: [menuId])
+  menuId Int
+  food tblFood @relation(fields: [foodId], references: [foodId])
+  foodId Int
+  @@id([foodId, menuId])
+  @@index([menuId])
   @@index([foodId])
 }
 
