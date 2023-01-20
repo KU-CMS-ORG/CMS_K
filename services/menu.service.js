@@ -27,7 +27,7 @@ async function findDetail(whereKey) {
             where: whereKey,
             include: {
                 foods: {
-                    select: {
+                    include: {
                         food: true,
                     },
                 },
