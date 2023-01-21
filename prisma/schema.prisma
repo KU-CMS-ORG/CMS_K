@@ -105,6 +105,11 @@ model tblFoodOnMenu {
   @@index([foodId])
 }
 
+enum TranStatus {
+  CANCELLED
+  ORDERED
+  SERVED
+}
 model tblTranHistory {
   tranId        Int          @id @default(autoincrement())
   user           tblUser     @relation(fields: [userId], references: [userId])
@@ -113,11 +118,12 @@ model tblTranHistory {
   foodId        Int
   tranDate      DateTime     @default(now())
   checkoutPrice Decimal
-  tranDesc      String       @db.VarChar(255)
+  tranDesc      String?       @db.VarChar(255)
   quantity       Int
+  tranStatus TranStatus @default(ORDERED)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  tblPayment    tblPayment?
+  payment    tblPayment?
 
   @@index([userId])
   @@index([foodId])
@@ -128,7 +134,7 @@ enum PaymentMethod {
   ESEWA
 }
 
-enum PaidStatus {
+enum PaymentStatus {
   PAID
   PENDING
 }
@@ -139,10 +145,10 @@ model tblPayment {
   tran           tblTranHistory @relation(fields: [tranId], references: [tranId])
   tranId        Int              @unique
   tranDate      DateTime         @default(now())
+  referenceId   String?         @db.VarChar(255)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   paymentMethod PaymentMethod?   
-  paidStatus    PaidStatus       @default(PENDING)
-
+  paymentStatus    PaymentStatus       @default(PENDING)
   @@index([userId])
 }
