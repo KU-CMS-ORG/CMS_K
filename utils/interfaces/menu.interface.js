@@ -26,16 +26,18 @@ const editMenuSchema = {
         })
         .required(),
     query: {},
-    body: Joi.object().keys({
-        menuFor: Joi.date().optional(),
-        foods: Joi.array()
-            .items(
-                Joi.object().keys({
-                    id: Joi.number().required,
-                })
-            )
-            .optional(),
-    }),
+    body: Joi.object()
+        .keys({
+            menuFor: Joi.date().optional().min("now").iso(),
+            foods: Joi.array()
+                .items(
+                    Joi.object().keys({
+                        foodId: Joi.number().min(0).required(),
+                    })
+                )
+                .optional(),
+        })
+        .required(),
 };
 
 const createMenuSchema = {
@@ -43,7 +45,7 @@ const createMenuSchema = {
     query: {},
     body: Joi.object()
         .keys({
-            menuFor: Joi.date().required().min("now"),
+            menuFor: Joi.date().required().min("now").iso(),
             foods: Joi.array()
                 .items(
                     Joi.object().keys({

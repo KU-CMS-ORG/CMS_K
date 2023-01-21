@@ -78,15 +78,25 @@ async function findAll(options, filters) {
 /**
  * updates menu item by id
  * @param {{menuId: Number}} whereKey
- * @param {{foodName?: String, quantity?: Number, price?: Number, desc?: String, foodCategory?: String}} menuDetails
+ * @param {{foods?: [{foodId:String}], isAvailable?: boolean, menuFor?: Date}} menuDetails
  * @returns
  */
-async function updateMenu(whereKey, foodDetails) {
+async function updateMenu(whereKey, menuDetails) {
     try {
         // for food in menu, delete everything and reinsert
+        const { foods, ...rest } = menuDetails;
         return prisma.tblMenu.update({
             where: { ...whereKey },
-            data: { ...foodDetails },
+            data: {
+                ...rest,
+                foods: {
+                    deleteMany: {},
+                    create: [...foods],
+                },
+            },
+            include: {
+                foods: true,
+            },
         });
     } catch (error) {
         throw error;
@@ -95,7 +105,7 @@ async function updateMenu(whereKey, foodDetails) {
 
 /**
  * creates new food item
- * @param {{menuFor: Date, food: [{foodId:String}]}} menuDetails
+ * @param {{menuFor: Date, foods: [{foodId:String}]}} menuDetails
  * @returns
  */
 async function create(menuDetails) {

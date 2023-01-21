@@ -21,4 +21,9 @@ router.get(
     menuController.fetchAllMenus
 );
 
+router.patch(
+    "/:id",
+    schemaValidate(menuSchema.editMenuSchema),
+    menuController.updateMenuDetail
+);
 module.exports = router.routes();
