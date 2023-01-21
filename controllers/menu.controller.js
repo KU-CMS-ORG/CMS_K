@@ -61,4 +61,35 @@ async function createMenu(ctx, next) {
     }
 }
 
-module.exports = { createMenu, fetchAllMenus, fetchMenuDetails };
+/**
+ * updates menu details if id matches
+ * @param {*} ctx
+ * @param {*} next
+ */
+async function updateMenuDetail(ctx, next) {
+    try {
+        const { id } = ctx.request.params;
+        const updateDetails = ctx.request.body;
+        const { foods, menuFor } = updateDetails;
+        await menuService.updateMenu(
+            { menuId: +id },
+            {
+                ...(menuFor && {
+                    menuFor: new Date(menuFor),
+                    isAvailable: areDatesEqual(parseISO(menuFor), new Date()),
+                }),
+                ...(foods && { foods }),
+            }
+        );
+        return (ctx.body = "Menu details updated successfully");
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = {
+    createMenu,
+    fetchAllMenus,
+    fetchMenuDetails,
+    updateMenuDetail,
+};
