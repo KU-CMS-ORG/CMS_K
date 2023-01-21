@@ -41,8 +41,8 @@ model tblUser {
   faculty          Faculty?            
   userStatus      UserStatus           @default(ACTIVE) 
   credential tblCredential?
-  tblTranHistory tblTranHistory[]
-  tblPayment      tblPayment[]
+  tranHistory tblTranHistory[]
+  payment      tblPayment[]
 }
 
 model tblCredential {
@@ -71,8 +71,8 @@ model tblFood {
   quantity         Int  @default(1)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
-  tblMenu         tblFoodOnMenu[]
-  tblTranHistory tblTranHistory[]
+  menu         tblFoodOnMenu[]
+  tranHistory tblTranHistory[]
 }
 
 enum Days {
