@@ -17,6 +17,7 @@ This is the backend code for managing canteen app written in Nodejs and koajs an
 -   format list api responses to show relevant data
 -   format detail api responses to show relevant data
 -   use ML to predict the menu for each day with the data
+-   use ML to predict what each one would order, a recommendation system
 -   get data for dashboard analytics, routes, services and all that jazz
 -   add error handling to all services like when user is not found, order not found etc.
 -   add image upload for food and user
