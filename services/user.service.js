@@ -11,6 +11,13 @@ async function findDetail(whereKey) {
         // find one user and return it
         return prisma.tblUser.findUnique({
             where: whereKey,
+            include: {
+                tranHistory: {
+                    include: {
+                        payment: true,
+                    },
+                },
+            },
         });
     } catch (error) {
         throw error;
