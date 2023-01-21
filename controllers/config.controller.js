@@ -1,22 +1,22 @@
 const configService = require("../services/config.service");
-function fetchAppRoles() {
-    return configService.fetchRoles();
+function fetchAppRoles(ctx, next) {
+    return (ctx.body = configService.fetchRoles());
 }
 
-function fetchPaymentStatuses() {
-    return configService.fetchPaymentStatus();
+function fetchPaymentStatuses(ctx, next) {
+    return (ctx.body = configService.fetchPaymentStatus());
 }
 
-function fetchFoodCategories() {
-    return configService.fetchFoodCategories();
+function fetchFoodCategories(ctx, next) {
+    return (ctx.body = configService.fetchFoodCategories());
 }
 
-function fetchTransactionStatuses() {
-    return configService.fetchTransactionStatus();
+function fetchTransactionStatuses(ctx, next) {
+    return (ctx.body = configService.fetchTransactionStatus());
 }
 
-function fetchPaymentMethods() {
-    return configService.fetchPaymentMethod();
+function fetchPaymentMethods(ctx, next) {
+    return (ctx.body = configService.fetchPaymentMethod());
 }
 
 module.exports = {
