@@ -24,3 +24,5 @@ This is the backend code for managing canteen app written in Nodejs and koajs an
 -   add google login and signup
 -   implement sorting in list apis, searching as well
 -   feature: add rating and feedback to each order (future)
+-   feature: notification with onesignal
+-   notice section: that shows any notice the canteen management admin places regarding canteen, (for future)
