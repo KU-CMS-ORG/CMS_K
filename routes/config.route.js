@@ -6,8 +6,8 @@ const router = new Router();
 
 router.get("/roles", configController.fetchAppRoles);
 router.get("/payment-methods", configController.fetchAppRoles);
-router.get("/transaction-status", configController.fetchTransactionStatuses);
+router.get("/transaction-statuses", configController.fetchTransactionStatuses);
 router.get("/food-categories", configController.fetchFoodCategories);
-router.get("/payment-status", configController.fetchPaymentStatuses);
+router.get("/payment-statuses", configController.fetchPaymentStatuses);
 
 module.exports = router.routes();
