@@ -1,21 +1,21 @@
 (() => {
-	const { PrismaClient } = require("@prisma/client");
+    const { PrismaClient } = require("@prisma/client");
 
-	const prisma = new PrismaClient();
+    const prisma = new PrismaClient();
 
-	async function database() {}
+    async function database() {}
 
-	database()
-		.then(async () => {
-			await prisma.$disconnect();
-		})
+    database()
+        .then(async () => {
+            await prisma.$disconnect();
+        })
 
-		.catch(async (e) => {
-			console.error(e);
+        .catch(async (e) => {
+            console.error(e);
 
-			await prisma.$disconnect();
+            await prisma.$disconnect();
 
-			process.exit(1);
-		});
-	module.exports = database;
+            process.exit(1);
+        });
+    module.exports = database;
 })();
