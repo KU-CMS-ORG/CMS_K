@@ -2,10 +2,10 @@ const Router = require("@koa/router");
 const router = new Router();
 
 const {
-	register,
-	getUsers,
-	getUser,
-	updateUser,
+    register,
+    getUsers,
+    getUser,
+    updateUser,
 } = require("../controllers/user");
 
 router.post("/register", register);
