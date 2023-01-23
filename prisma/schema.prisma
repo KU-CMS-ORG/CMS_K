@@ -8,70 +8,109 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum Faculty {
+  AI
+  AGRICULTURE
+  ADMINISTRATION
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  CLOSED
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+  USER
 }
 
 model tblUser {
-  userId          String             @id @unique @db.VarChar(255)
-  fName           String             @db.VarChar(255)
-  mName           String             @db.VarChar(255)
-  lName           String             @db.VarChar(255)
-  email            String             @unique @db.VarChar(255)
-  password         String             @db.VarChar(255)
-  phone            String             @unique @db.VarChar(255)
-  countryCode     Int                @db.Int
-  role             String             @db.VarChar(255)
-  faculty          String             @db.VarChar(255)
-  userStatus      String             @db.VarChar(255)
-  tblCrendentials tblCrendentials[]
-  tblTranhistory tblTranhistory[]
-  tblPayment      tblPayment[]
+  userId          String             @id @unique  @db.VarChar(36)
+  firstName           String?             @db.VarChar(100)
+  middleName           String?             @db.VarChar(100)
+  lastName           String?             @db.VarChar(100)
+  phone            String?             @unique @db.VarChar(10)
+  countryCode     Int?                @db.Int
+  role             Role             @default(USER)
+  rollId             String?             @db.VarChar(15)
+  faculty          Faculty?            
+  userStatus      UserStatus           @default(ACTIVE) 
+  credential tblCredential?
+  tranHistory tblTranHistory[]
+  payment      tblPayment[]
 }
 
-model tblCrendentials {
+model tblCredential {
   credId    Int      @id @default(autoincrement())
   user       tblUser @relation(fields: [userId], references: [userId])
-  userId    String   @db.VarChar(255)
-  email      String   @unique @db.VarChar(255)
-  phone      Int      @unique @db.Int
-  password   String   @db.VarChar(255)
+  userId    String   @unique @db.VarChar(36)
+  email      String   @unique @db.VarChar(100)
+  password   String?   @db.VarChar(255) 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum FoodCategory {
+  MEAL
+  LUNCH
+  BEVERAGE
+  OTHER
 }
 
 model tblFood {
   foodId          Int                @id @default(autoincrement())
   foodName        String             @db.VarChar(255)
-  foodCategory    String             @db.VarChar(255)
+  foodCategory    FoodCategory       
   price            Decimal
-  desc             String             @db.VarChar(255)
-  quantity         Int
+  desc             String?             @db.VarChar(255)
+  quantity         Int  @default(1)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
-  tblMenu         tblMenu[]
-  tblTranhistory tblTranhistory[]
+  menu         tblFoodOnMenu[]
+  tranHistory tblTranHistory[]
 }
 
-enum days {
-  Sunday
-  Monday
-  Tuesday
-  Wednesday
-  Thursday
-  Friday
-  Saturday
+enum Days {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
 }
 
 model tblMenu {
   menuId        Int      @id @default(autoincrement())
-  food           tblFood @relation(fields: [foodId], references: [foodId])
-  foodId        Int
   isAvailable   Boolean
-  createdAtday days
+  createdAtDay Days
+  menuFor DateTime @default(now()) @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  foods tblFoodOnMenu[]
 }
 
-model tblTranhistory {
+model tblFoodOnMenu {
+  menu tblMenu @relation(fields: [menuId], references: [menuId])
+  menuId Int
+  food tblFood @relation(fields: [foodId], references: [foodId])
+  foodId Int
+  @@id([foodId, menuId])
+  @@index([menuId])
+  @@index([foodId])
+}
+
+enum TranStatus {
+  CANCELLED
+  ORDERED
+  SERVED
+}
+model tblTranHistory {
   tranId        Int          @id @default(autoincrement())
   user           tblUser     @relation(fields: [userId], references: [userId])
   userId        String       @db.VarChar(255)
@@ -79,22 +118,37 @@ model tblTranhistory {
   foodId        Int
   tranDate      DateTime     @default(now())
   checkoutPrice Decimal
-  tranDesc      String       @db.VarChar(255)
+  tranDesc      String?       @db.VarChar(255)
   quantity       Int
+  tranStatus TranStatus @default(ORDERED)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  tblPayment    tblPayment?
+  payment    tblPayment?
+
+  @@index([userId])
+  @@index([foodId])
 }
 
+enum PaymentMethod {
+  CASH
+  ESEWA
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+}
 model tblPayment {
   paymentId     Int              @id @default(autoincrement())
   user           tblUser         @relation(fields: [userId], references: [userId])
   userId        String           @db.VarChar(255)
-  tran           tblTranhistory @relation(fields: [tranId], references: [tranId])
+  tran           tblTranHistory @relation(fields: [tranId], references: [tranId])
   tranId        Int              @unique
   tranDate      DateTime         @default(now())
+  referenceId   String?         @db.VarChar(255)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
-  paymentMethod String           @db.VarChar(255)
-  paidStatus    String           @db.VarChar(255)
+  paymentMethod PaymentMethod?   
+  paymentStatus    PaymentStatus       @default(PENDING)
+  @@index([userId])
 }
