@@ -1,8 +1,9 @@
+const { Faculty, UserStatus, Role } = require("@prisma/client");
 const Joi = require("joi");
 
 const userDetailSchema = {
     params: Joi.object().keys({
-        id: Joi.string().required(),
+        id: Joi.string().required().guid(),
     }),
     query: {},
     body: {},
@@ -11,28 +12,53 @@ const userDetailSchema = {
 const usersListSchema = {
     params: {},
     query: Joi.object().keys({
-        limit: Joi.number().required().min(0),
-        page: Joi.number().required().min(1),
-        sortBy: Joi.allow(["firstName", "lastName"]),
-        search: Joi.string(),
+        limit: Joi.number().required().min(0).required(),
+        page: Joi.number().required().min(1).required(),
+        search: Joi.string().optional(),
     }),
     body: {},
 };
 
 const editUserSchema = {
-    params: Joi.object().keys({
-        id: Joi.string().required(),
-    }),
+    params: Joi.object()
+        .keys({
+            id: Joi.string().required().guid(),
+        })
+        .required(),
     query: {},
     body: Joi.object().keys({
         firstName: Joi.string().optional(),
         lastName: Joi.string().optional(),
         middleName: Joi.string().optional(),
         email: Joi.string().email().optional(),
-        phone: Joi.number().optional(),
-        role: Joi.allow(["staff", "user"]).optional(),
-        department: Joi.allow(["staff", "student", "teacher"]).optional(),
+        phone: Joi.string().optional(),
+        rollId: Joi.string().optional(),
+        userStatus: Joi.string()
+            .valid(UserStatus.ACTIVE, UserStatus.CLOSED, UserStatus.INACTIVE)
+            .optional(),
+        faculty: Joi.string()
+            .valid(Faculty.ADMINISTRATION, Faculty.AGRICULTURE, Faculty.AI)
+            .optional(),
     }),
 };
 
-module.exports = { userDetailSchema, usersListSchema, editUserSchema };
+const editUserRoleSchema = {
+    params: Joi.object()
+        .keys({
+            id: Joi.string().required().guid(),
+        })
+        .required(),
+    query: {},
+    body: Joi.object()
+        .keys({
+            role: Joi.string().valid(Role.ADMIN, Role.USER).required(),
+        })
+        .required(),
+};
+
+module.exports = {
+    userDetailSchema,
+    usersListSchema,
+    editUserSchema,
+    editUserRoleSchema,
+};

@@ -1,137 +1,84 @@
-const Router = require("@koa/router");
-const router = new Router();
+const foodService = require("../services/food.service");
 
-const uploadFile = require("../utils/fileUpload");
-
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-
-//Get all foods API
-
-router.get("/food", async (ctx, next) => {
+/**
+ * fetch list of all the foods available
+ * @param {*} ctx
+ * @param {*} next
+ * @returns
+ */
+async function fetchAllFoods(ctx, next) {
     try {
-        const foods = await prisma.tblFood.findMany();
-        ctx.response.status = 200;
-
-        ctx.body = {
-            message: "foods list",
-            data: foods,
-        };
-        await next();
-    } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = {
-            message: err.message,
-        };
+        const { limit, page, search } = ctx.request.query;
+        const response = await foodService.findAll(
+            { limit: +limit, page: +page },
+            { ...(search && { search }) }
+        );
+        return (ctx.body = response);
+    } catch (error) {
+        throw error;
     }
-});
-//GET one food API
-router.get("/food/:id", async (ctx, next) => {
+}
+
+/**
+ * fetches details of a given specific food
+ * @param {*} ctx
+ * @param {*} next
+ * @returns
+ */
+async function fetchFoodDetails(ctx, next) {
     try {
-        const food = await prisma.tblFood.findUnique({
-            where: { foodId: String(ctx.params.id) },
-        });
-        if (food) {
-            ctx.response.status = 200;
-            ctx.body = {
-                message: "food retrieved",
-
-                data: food,
-            };
-        }
-        await next();
-    } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = {
-            message: err.message,
-        };
+        const { id } = ctx.request.params;
+        const response = await foodService.findDetail({ foodId: +id });
+        return (ctx.body = response);
+    } catch (error) {
+        throw error;
     }
-});
-router.post("/upload", async (ctx) => {
-    const file = ctx.request.files.file;
-    const { key, url } = await uploadFile({
-        fileName: file.name,
-        filePath: file.path,
-        fileType: file.type,
-    });
-    ctx.body = { key, url };
-});
-//Create New food API
-router.post("/food", async (ctx, next) => {
+}
+
+/**
+ * creates a new food item
+ * @param {*} ctx
+ * @param {*} next
+ * @returns
+ */
+async function createFood(ctx, next) {
     try {
-        const newfood = await prisma.tblfood.createMany({
-            data: {
-                foodId: ctx.request.body.foodId,
-                foodName: ctx.request.body.foodName,
-                foodCategory: ctx.request.body.foodCategory,
-                price: ctx.request.body.price,
-                desc: ctx.request.body.desc,
-                quantity: ctx.request.body.quantity,
-            },
-        });
-        if (food) {
-            ctx.response.status = 201;
-
-            ctx.body = {
-                message: "New food created",
-
-                data: newfood,
-            };
-        }
-
-        await next();
-    } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = {
-            message: err.message,
-        };
+        const createDetails = ctx.request.body;
+        await foodService.create(createDetails);
+        return (ctx.body = "Food details created successfully");
+    } catch (error) {
+        throw error;
     }
-});
+}
 
-router.put("/food/:id", async (ctx, next) => {
+/**
+ * updates an existing food detail
+ * @param {*} ctx
+ * @param {*} next
+ * @returns
+ */
+async function updateFoodDetail(ctx, next) {
     try {
-        const food = await prisma.tblfood.update({
-            where: { foodId: String(ctx.params.id) },
-            data: {
-                foodId: ctx.request.body.foodId,
-                foodName: ctx.request.body.foodName,
-                foodCategory: ctx.request.body.foodCategory,
-                price: ctx.request.body.price,
-                desc: ctx.request.body.desc,
-                quantity: ctx.request.body.quantity,
-            },
-        });
-        if (food) {
-            ctx.response.status = 201;
-
-            ctx.body = {
-                message: "food updated",
-
-                data: food,
-            };
-        }
-
-        await next();
-    } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = {
-            message: err.message,
+        const updateDetails = ctx.request.body;
+        const params = ctx.request.params;
+        const { foodName, foodCategory, price, desc, quantity } = updateDetails;
+        const updateBody = {
+            ...(foodName && { foodName }),
+            ...(foodCategory && { foodCategory }),
+            ...(price && { price }),
+            ...(desc && { desc }),
+            ...(quantity && { quantity }),
         };
+        await foodService.updateFood({ foodId: +params.id }, updateBody);
+        return (ctx.body = "Food details updated successfully");
+    } catch (error) {
+        throw error;
     }
-});
-router.delete("/food/:id", async (ctx, next) => {
-    try {
-        await prisma.tblfood.delete({
-            where: { foodId: String(ctx.params.id) },
-        });
-        ctx.response.status = 200;
-        ctx.body = { message: "food Deleted" };
-        await next();
-    } catch (err) {
-        ctx.status = err.statusCode || err.status || 500;
-        ctx.body = {
-            message: err.message,
-        };
-    }
-});
-module.exports = router;
+}
+
+module.exports = {
+    fetchAllFoods,
+    fetchFoodDetails,
+    createFood,
+    updateFoodDetail,
+};

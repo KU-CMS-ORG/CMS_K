@@ -41,8 +41,8 @@ model tblUser {
   faculty          Faculty?            
   userStatus      UserStatus           @default(ACTIVE) 
   credential tblCredential?
-  tblTranHistory tblTranHistory[]
-  tblPayment      tblPayment[]
+  tranHistory tblTranHistory[]
+  payment      tblPayment[]
 }
 
 model tblCredential {
@@ -56,10 +56,10 @@ model tblCredential {
 }
 
 enum FoodCategory {
-  meal
-  lunch
-  beverages
-  others
+  MEAL
+  LUNCH
+  BEVERAGE
+  OTHER
 }
 
 model tblFood {
@@ -71,32 +71,45 @@ model tblFood {
   quantity         Int  @default(1)
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
-  tblMenu         tblMenu[]
-  tblTranHistory tblTranHistory[]
+  menu         tblFoodOnMenu[]
+  tranHistory tblTranHistory[]
 }
 
-enum days {
-  Sunday
-  Monday
-  Tuesday
-  Wednesday
-  Thursday
-  Friday
-  Saturday
+enum Days {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
 }
 
 model tblMenu {
   menuId        Int      @id @default(autoincrement())
-  food           tblFood @relation(fields: [foodId], references: [foodId])
-  foodId        Int
   isAvailable   Boolean
-  createdAtDay days
+  createdAtDay Days
+  menuFor DateTime @default(now()) @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  foods tblFoodOnMenu[]
+}
 
+model tblFoodOnMenu {
+  menu tblMenu @relation(fields: [menuId], references: [menuId])
+  menuId Int
+  food tblFood @relation(fields: [foodId], references: [foodId])
+  foodId Int
+  @@id([foodId, menuId])
+  @@index([menuId])
   @@index([foodId])
 }
 
+enum TranStatus {
+  CANCELLED
+  ORDERED
+  SERVED
+}
 model tblTranHistory {
   tranId        Int          @id @default(autoincrement())
   user           tblUser     @relation(fields: [userId], references: [userId])
@@ -105,16 +118,26 @@ model tblTranHistory {
   foodId        Int
   tranDate      DateTime     @default(now())
   checkoutPrice Decimal
-  tranDesc      String       @db.VarChar(255)
+  tranDesc      String?       @db.VarChar(255)
   quantity       Int
+  tranStatus TranStatus @default(ORDERED)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  tblPayment    tblPayment?
+  payment    tblPayment?
 
   @@index([userId])
   @@index([foodId])
 }
 
+enum PaymentMethod {
+  CASH
+  ESEWA
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+}
 model tblPayment {
   paymentId     Int              @id @default(autoincrement())
   user           tblUser         @relation(fields: [userId], references: [userId])
@@ -122,10 +145,10 @@ model tblPayment {
   tran           tblTranHistory @relation(fields: [tranId], references: [tranId])
   tranId        Int              @unique
   tranDate      DateTime         @default(now())
+  referenceId   String?         @db.VarChar(255)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
-  paymentMethod String           @db.VarChar(255)
-  paidStatus    String           @db.VarChar(255)
-
+  paymentMethod PaymentMethod?   
+  paymentStatus    PaymentStatus       @default(PENDING)
   @@index([userId])
 }
