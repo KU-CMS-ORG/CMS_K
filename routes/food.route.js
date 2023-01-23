@@ -4,7 +4,7 @@ const {
     signin,
     changePassword,
     forgotPassword,
-} = require("../controllers/auth.controller");
+} = require("../controllers/food.controller");
 
 const router = new Router();
 

@@ -11,7 +11,8 @@ DB();
 //Route files
 const app = new Koa();
 const PORT = config.port;
-app.use(koaBody());
+
+app.use(koaBody({ multipart: true }));
 app.use(rootRouter);
 
 console.log(
