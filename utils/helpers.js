@@ -30,7 +30,27 @@ function getCreatedAtDay(myDate) {
     }
 }
 
+/**
+ *
+ * @param {Array<String> | String} sortList
+ */
+function sortHelper(sortList) {
+    console.log(sortList);
+    const order = [];
+    let newSortList;
+    if (typeof sortList == "string") {
+        newSortList = [sortList];
+    } else {
+        newSortList = sortList;
+    }
+    newSortList.forEach((eachSort) => {
+        const [key, value] = eachSort.split(":");
+        order.push({ [key]: value });
+    });
+    return order;
+}
 module.exports = {
     areDatesEqual,
     getCreatedAtDay,
+    sortHelper,
 };

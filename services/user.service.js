@@ -1,5 +1,7 @@
 const { PrismaClient, Prisma, UserStatus, Role } = require("@prisma/client");
+const { NOT_FOUND } = require("http-status");
 const prisma = new PrismaClient();
+const ApiError = require("../utils/errorHandler");
 
 /**
  *get detail of user by id or email
@@ -9,9 +11,12 @@ const prisma = new PrismaClient();
 async function findDetail(whereKey) {
     try {
         // find one user and return it
-        return prisma.tblUser.findUnique({
+        const result = await prisma.tblUser.findUnique({
             where: whereKey,
             include: {
+                credential: {
+                    select: { email: true },
+                },
                 tranHistory: {
                     include: {
                         payment: true,
@@ -19,6 +24,15 @@ async function findDetail(whereKey) {
                 },
             },
         });
+
+        if (!result) {
+            throw new ApiError({
+                message: "could not find the selected user",
+                statusCode: NOT_FOUND,
+            });
+        }
+        const { credential, ...rest } = result;
+        return { ...rest, ...credential };
     } catch (error) {
         throw error;
     }
@@ -26,7 +40,7 @@ async function findDetail(whereKey) {
 
 /**
  * find all users in the system
- * @param {{limit: Number, page: Number, sortBy?: String, sortType?: String}} options
+ * @param {{limit: Number, page: Number, sort?: []}} options
  * @param {{search?:String}} filters
  */
 async function findAll(options, filters) {
@@ -46,6 +60,14 @@ async function findAll(options, filters) {
                 },
             ],
         };
+        const orderBy = options.sort
+            ? options.sort.map((eachSort) => {
+                  if (eachSort.createdAt) {
+                      return { credential: { createdAt: eachSort.createdAt } };
+                  }
+                  return eachSort;
+              })
+            : [{ credential: { createdAt: "desc" } }];
         const [count, allUsers] = await prisma.$transaction([
             prisma.tblUser.count({
                 where: whereQuery,
@@ -53,10 +75,13 @@ async function findAll(options, filters) {
             prisma.tblUser.findMany({
                 where: whereQuery,
                 include: {
-                    credential: { select: { email: true, createdAt: true } },
+                    credential: {
+                        select: { email: true, createdAt: true },
+                    },
                 },
                 take: options.limit,
                 skip: (options.page - 1) * options.limit,
+                orderBy,
             }),
         ]);
         return {
