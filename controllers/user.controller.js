@@ -1,4 +1,5 @@
 const userService = require("../services/user.service");
+const { sortHelper } = require("../utils/helpers");
 /**
  * finds and returns all users
  * @param {*} ctx
@@ -7,9 +8,14 @@ const userService = require("../services/user.service");
  */
 async function fetchAllUsers(ctx, next) {
     try {
-        const { limit, page, search } = ctx.request.query;
+        const { limit, page, search, sort } = ctx.request.query;
+        console.log(sort);
         const response = await userService.findAll(
-            { limit: +limit, page: +page },
+            {
+                limit: +limit,
+                page: +page,
+                ...(sort && { sort: sortHelper(sort) }),
+            },
             { ...(search && { search }) }
         );
         return (ctx.body = response);
