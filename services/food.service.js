@@ -33,6 +33,8 @@ async function findAll(options, filters) {
                 },
             ],
         };
+
+        const orderBy = [{ createdAt: "desc" }];
         const [count, allFoods] = await prisma.$transaction([
             prisma.tblFood.count({
                 where: whereQuery,
@@ -41,6 +43,7 @@ async function findAll(options, filters) {
                 where: whereQuery,
                 take: options.limit,
                 skip: (options.page - 1) * options.limit,
+                orderBy,
             }),
         ]);
         return {
