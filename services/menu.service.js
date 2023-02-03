@@ -42,12 +42,21 @@ async function findDetail(whereKey) {
 
 /**
  * find all menu in the system
- * @param {{limit: Number, page: Number, sortBy?: String, sortType?: String}} options
+ * @param {{limit: Number, page: Number, sort?: []}} options
  * @param {{search?:String}} filters
  */
 async function findAll(options, filters) {
     try {
-        const whereQuery = {};
+        console.log(filters.search);
+        const whereQuery = {
+            ...(filters.search && {
+                menuFor: {
+                    gte: new Date(filters.search),
+                    lt: addDays(new Date(filters.search), 1),
+                },
+            }),
+        };
+        const orderBy = options.sort ? options.sort : [{ createdAt: "desc" }];
         const [count, allMenus] = await prisma.$transaction([
             prisma.tblMenu.count({
                 where: whereQuery,
@@ -63,12 +72,23 @@ async function findAll(options, filters) {
                 },
                 take: options.limit,
                 skip: (options.page - 1) * options.limit,
+                orderBy,
             }),
         ]);
         return {
             page: options.page,
             limit: options.limit,
-            data: allMenus,
+            data: allMenus.map((eachMenu) => {
+                const { foods, ...rest } = eachMenu;
+
+                return {
+                    ...rest,
+                    foods: foods.map((eachFood) => {
+                        const { food, ...rest } = eachFood;
+                        return { ...food, ...rest };
+                    }),
+                };
+            }),
             totalData: count || 0,
             totalPages: Math.ceil(count / options.limit),
         };
