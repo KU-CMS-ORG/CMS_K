@@ -45,7 +45,7 @@ async function createFood(ctx, next) {
     try {
         const createDetails = ctx.request.body;
         await foodService.create(createDetails);
-        return (ctx.body = "Food details created successfully");
+        return (ctx.body = JSON.stringify("Food details created successfully"));
     } catch (error) {
         throw error;
     }
