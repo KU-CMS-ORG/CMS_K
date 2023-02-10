@@ -87,4 +87,14 @@ async function create(foodDetails) {
     }
 }
 
-module.exports = { findDetail, findAll, updateFood, create };
+async function deleteFoodDetail(whereKey) {
+    try {
+        return prisma.tblFood.delete({
+            where: whereKey,
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { findDetail, findAll, updateFood, create, deleteFoodDetail };

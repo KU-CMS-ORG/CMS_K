@@ -128,4 +128,14 @@ async function create(menuDetails) {
     }
 }
 
-module.exports = { findDetail, findAll, updateMenu, create };
+async function deleteMenu(whereKey) {
+    try {
+        return prisma.tblMenu.delete({
+            where: whereKey,
+        });
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { findDetail, findAll, updateMenu, create, deleteMenu };
