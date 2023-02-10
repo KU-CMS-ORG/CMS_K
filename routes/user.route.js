@@ -6,6 +6,7 @@ const {
     fetchUserDetail,
     updateRole,
     updateUserDetail,
+    deleteUserDetail,
 } = require("../controllers/user.controller");
 
 const router = new Router();
@@ -27,4 +28,9 @@ router.patch(
     updateRole
 );
 
+router.delete(
+    "/:id",
+    schemaValidate(userSchema.userDetailSchema),
+    deleteUserDetail
+);
 module.exports = router.routes();
