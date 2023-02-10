@@ -25,5 +25,9 @@ router.patch(
     schemaValidate(foodSchema.editFoodSchema),
     userController.updateFoodDetail
 );
-
+router.delete(
+    "/:id",
+    schemaValidate(foodSchema.foodDetailSchema),
+    userController.deleteFoodDetails
+);
 module.exports = router.routes();
