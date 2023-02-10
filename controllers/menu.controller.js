@@ -86,10 +86,20 @@ async function updateMenuDetail(ctx, next) {
         throw error;
     }
 }
+async function deleteMenu(ctx, next) {
+    try {
+        const { id } = ctx.request.params;
 
+        await menuService.deleteMenu({ menuId: +id });
+        return (ctx.body = "Menu details deleted successfully");
+    } catch (error) {
+        throw error;
+    }
+}
 module.exports = {
     createMenu,
     fetchAllMenus,
     fetchMenuDetails,
     updateMenuDetail,
+    deleteMenu,
 };
