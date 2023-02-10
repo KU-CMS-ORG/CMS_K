@@ -3,7 +3,9 @@
 
     const prisma = new PrismaClient();
 
-    async function database() {}
+    async function database() {
+        console.log("database Connected");
+    }
 
     database()
         .then(async () => {
