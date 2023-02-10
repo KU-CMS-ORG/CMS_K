@@ -54,7 +54,7 @@ async function findAll(options, filters) {
             prisma.tblTranHistory.findMany({
                 where: whereQuery,
                 include: {
-                    food: true,
+                    food: false, // change to true in production
                 },
                 take: options.limit,
                 skip: (options.page - 1) * options.limit,
