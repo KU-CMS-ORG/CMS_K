@@ -6,7 +6,7 @@ const DB = require("./db");
 const { changePasswordSchema } = require("./utils/interfaces/auth.interface");
 const schemaValidate = require("./utils/schema.validation");
 const config = require("./utils/config");
-DB();
+// DB();
 
 //Route files
 const app = new Koa();
