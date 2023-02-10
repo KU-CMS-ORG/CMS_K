@@ -26,4 +26,9 @@ router.patch(
     schemaValidate(menuSchema.editMenuSchema),
     menuController.updateMenuDetail
 );
+router.delete(
+    "/:id",
+    schemaValidate(menuSchema.menuDetailSchema),
+    menuController.deleteMenu
+);
 module.exports = router.routes();
