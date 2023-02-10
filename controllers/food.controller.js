@@ -76,9 +76,20 @@ async function updateFoodDetail(ctx, next) {
     }
 }
 
+async function deleteFoodDetails(ctx, next) {
+    try {
+        const { id } = ctx.request.params;
+        const response = await foodService.deleteFoodDetail({ foodId: +id });
+        return (ctx.body = "successfully deleted");
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     fetchAllFoods,
     fetchFoodDetails,
     createFood,
     updateFoodDetail,
+    deleteFoodDetails,
 };
