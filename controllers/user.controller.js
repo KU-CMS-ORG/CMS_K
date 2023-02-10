@@ -86,9 +86,20 @@ async function updateRole(ctx, next) {
     }
 }
 
+async function deleteUserDetail(ctx, next) {
+    try {
+        const { id } = ctx.request.params;
+        const response = await userService.deleteUser({ userId: id });
+        return (ctx.body = "User details deleted successfully!");
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     fetchAllUsers,
     fetchUserDetail,
     updateUserDetail,
     updateRole,
+    deleteUserDetail,
 };
