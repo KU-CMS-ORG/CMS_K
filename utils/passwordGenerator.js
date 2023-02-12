@@ -8,8 +8,8 @@ const SALT_ROUNDS = 10;
 function generatePassword(passLength = 12) {
     const chars =
         "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const password = "";
-    for (const i = 0; i <= passLength; i++) {
+    let password = "";
+    for (let i = 0; i <= passLength; i++) {
         const randomNumber = Math.floor(Math.random() * chars.length);
         password += chars.substring(randomNumber, randomNumber + 1);
     }

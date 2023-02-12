@@ -1,13 +1,12 @@
-const Koa = require("koa");
-
-const { koaBody } = require("koa-body");
-const rootRouter = require("./routes/index.route");
-const DB = require("./db");
-const { changePasswordSchema } = require("./utils/interfaces/auth.interface");
-const schemaValidate = require("./utils/schema.validation");
-const Debug = require("debug");
+import Koa from "koa";
+import { koaBody } from "koa-body";
+import rootRouter from "@routes/index.route";
+import DB from "@cms/db";
+import { changePasswordSchema } from "@utils/interfaces/auth.interface";
+import schemaValidate from "@utils/schema.validation";
+import Debug from "debug";
+import config from "@utils/config";
 const debug = Debug("server");
-const config = require("./utils/config");
 DB();
 
 //Route files
@@ -16,7 +15,8 @@ const PORT = config.port;
 app.use(async (ctx, next) => {
     try {
         await next();
-    } catch (err) {
+    } catch (e) {
+        const err = e as { statusCode: number; message: string };
         ctx.status = err.statusCode || 500;
         ctx.body = err.message;
         ctx.app.emit("error", err, ctx);
@@ -30,7 +30,7 @@ app.on("error", (err) => {
 });
 
 debug(
-    schemaValidate(changePasswordSchema, {
+    schemaValidate(changePasswordSchema as any, {
         oldPassword: "134",
         newPassword: "123",
     })
