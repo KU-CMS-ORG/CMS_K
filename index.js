@@ -5,13 +5,14 @@ const rootRouter = require("./routes/index.route");
 const DB = require("./db");
 const { changePasswordSchema } = require("./utils/interfaces/auth.interface");
 const schemaValidate = require("./utils/schema.validation");
+const Debug = require("debug");
+const debug = Debug("server");
 const config = require("./utils/config");
 DB();
 
 //Route files
 const app = new Koa();
 const PORT = config.port;
-
 app.use(async (ctx, next) => {
     try {
         await next();
@@ -25,10 +26,10 @@ app.use(koaBody());
 app.use(rootRouter);
 
 app.on("error", (err) => {
-    console.error("An Error has occured... ", err);
+    debug("An Error has occured... ", err);
 });
 
-console.log(
+debug(
     schemaValidate(changePasswordSchema, {
         oldPassword: "134",
         newPassword: "123",
@@ -36,5 +37,5 @@ console.log(
 );
 
 app.listen(PORT, () => {
-    console.log("Server running at: http://localhost:" + PORT);
+    debug("Server running at: http://localhost:" + PORT);
 });

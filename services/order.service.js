@@ -1,6 +1,7 @@
 // only admin can mark as paid if cash is given
 // if digital payment, it will auto mark as paid, so all in all only admin or system is allowed to mark as paid
-
+const Debug = require("debug");
+const debug = Debug("server");
 const { PrismaClient, PaymentStatus } = require("@prisma/client");
 const prisma = new PrismaClient();
 /**
@@ -12,7 +13,7 @@ async function create(transactionDetails) {
     // make payment and if payment info then save payment as well
     try {
         const { paymentDetails, ...rest } = transactionDetails;
-        console.log(paymentDetails);
+        debug(paymentDetails);
         return prisma.tblTranHistory.create({
             data: {
                 ...rest,
@@ -103,7 +104,7 @@ async function update(whereKey, orderDetails) {
     // cancel order, served status
     try {
         const { paymentDetails, ...rest } = orderDetails;
-        console.log(paymentDetails);
+        debug(paymentDetails);
         return prisma.tblTranHistory.update({
             where: whereKey,
             data: {

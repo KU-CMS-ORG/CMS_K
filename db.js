@@ -1,3 +1,5 @@
+const Debug = require("debug");
+const debug = Debug("db");
 (() => {
     const { PrismaClient } = require("@prisma/client");
 
@@ -11,7 +13,7 @@
         })
 
         .catch(async (e) => {
-            console.error(e);
+            debug(e);
 
             await prisma.$disconnect();
 

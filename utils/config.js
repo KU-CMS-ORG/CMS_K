@@ -4,4 +4,5 @@ const config = {
     port: process.env.PORT || 3000,
 };
 Object.seal(config);
+
 module.exports = config;

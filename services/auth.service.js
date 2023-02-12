@@ -12,7 +12,8 @@ const { ROLES, FACULTY, USER_STATUS } = require("../constants/app.constants");
 const { v4: uuidv4 } = require("uuid");
 const ApiError = require("../utils/errorHandler");
 const status = require("http-status");
-
+const Debug = require("debug");
+const debug = Debug("auth-service");
 const prisma = new PrismaClient();
 
 const googleClientId = config.googleClientId;
@@ -87,7 +88,7 @@ async function signup(userDetails) {
                 user: true,
             },
         });
-        console.log(existingUser, userDetails);
+        debug(existingUser, userDetails);
         if (existingUser) {
             throw new ApiError({
                 message:
