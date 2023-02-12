@@ -1,7 +1,8 @@
 const { compareAsc, parseISO } = require("date-fns");
 const menuService = require("../services/menu.service");
 const { areDatesEqual } = require("../utils/helpers");
-
+const Debug = require("debug");
+const debug = Debug("menu-controller");
 /**
  * fetch list of all the menus available
  * @param {*} ctx
@@ -46,7 +47,7 @@ async function fetchMenuDetails(ctx, next) {
 async function createMenu(ctx, next) {
     try {
         const createDetails = ctx.request.body;
-        console.log(createDetails);
+        debug(createDetails);
         await menuService.create({
             ...createDetails,
             menuFor: new Date(createDetails.menuFor),

@@ -1,5 +1,6 @@
 const orderService = require("../services/order.service");
-
+const Debug = require("debug");
+const debug = Debug("order-controller");
 /**
  * fetches all orders given the query
  * @param {*} ctx
@@ -32,7 +33,7 @@ async function fetchOrderDetails(ctx, next) {
 async function createOrder(ctx, next) {
     try {
         const createDetails = ctx.request.body;
-        console.log(createDetails);
+        debug(createDetails);
         await orderService.create({
             ...createDetails,
         });
@@ -52,7 +53,7 @@ async function updateOrderDetail(ctx, next) {
     try {
         const { id } = ctx.request.params;
         const updateDetails = ctx.request.body;
-        console.log(updateDetails);
+        debug(updateDetails);
         await orderService.update(
             { tranId: +id },
             {

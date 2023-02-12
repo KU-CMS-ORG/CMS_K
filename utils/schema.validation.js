@@ -1,5 +1,6 @@
 const Joi = require("joi");
-
+const Debug = require("debug");
+const debug = Debug("schema-validation");
 /**
  * validates any api data against schema
  * @param {Joi.ObjectSchema<any>} schema
@@ -17,7 +18,7 @@ function schemaValidate(schema) {
         };
         const { error, value } = Joi.compile(schema).validate(validBody);
         if (error) {
-            console.log(error);
+            debug(error);
             ctx.throw(400, error.details[0].message);
             // throw new Error(error.details[0].message);
         }

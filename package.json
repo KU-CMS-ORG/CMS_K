@@ -5,12 +5,13 @@
     "main": "app.js",
     "scripts": {
         "test": "npm test",
-        "dev": "nodemon index.js",
-        "start": "node index.js",
+        "dev": "DEBUG=* nodemon index.js",
+        "start": "DEBUG=* node index.js",
         "db:push": "npx prisma db push",
         "db:build": "prisma generate && prisma migrate deploy",
         "lint:fix": "npx prettier --write .",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "prisma:generate": "prisma generate"
     },
     "author": "",
     "license": "MIT",
@@ -30,6 +31,7 @@
         "bcryptjs": "^2.4.3",
         "camelcase": "^7.0.1",
         "date-fns": "^2.29.3",
+        "debug": "^4.3.4",
         "google-auth-library": "^8.7.0",
         "http-status": "^1.6.2",
         "joi": "^17.7.0",
