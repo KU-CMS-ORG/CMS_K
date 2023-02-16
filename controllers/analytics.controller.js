@@ -1,8 +1,11 @@
+// import { compareAsc, parseISO } from "dat-fns";
+// import { analyticsService } from "@services/analytics.service";
+// import { areDatesEqual } from "@utils/helpers";
 const { compareAsc, parseISO } = require("date-fns");
 const analyticsService = require("../services/analytics.service");
-const { areDatesEqual } = require("../utils/helpers");
-
+const areDatesEqual = require("@utils/helpers");
 /**
+ *
  * fetch list of all the menus available
  * @param {*} ctx
  * @param {*} next
@@ -10,13 +13,28 @@ const { areDatesEqual } = require("../utils/helpers");
  */
 async function getTotalTransaction(ctx, next) {
     try {
-        const {} = ctx.request.query;
-        const response = await analyticsService.getTotalTransaction();
+        const { fromDate, toDate } = ctx.request.query;
+
+        const response = await analyticsService.getTotalTransaction({
+            fromDate,
+            toDate,
+        });
         return (ctx.body = response);
     } catch (error) {
         throw error;
     }
 }
+async function getTotalTransactionByMonth(ctx, next) {
+    try {
+        const {} = ctx.request.query;
+        const response = await analyticsService.getTotalTransactionByMonth();
+        return (ctx.body = response);
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     getTotalTransaction,
+    getTotalTransactionByMonth,
 };
