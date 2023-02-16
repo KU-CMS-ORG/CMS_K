@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "commonjs",
+        "baseUrl": ".",
+        "paths": {
+            "@constants/*": ["constants/*"],
+            "@controllers/*": ["controllers/*"],
+            "@prisma/*": ["prisma/*"],
+            "@routes/*": ["routes/*"],
+            "@services/*": ["services/*"],
+            "@utils/*": ["utils/*"],
+            "@cms/*": ["*"]
+        },
+        "allowJs": true,
+        "declaration": true,
+        "sourceMap": true,
+        "outDir": "./build",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "skipLibCheck": true
+    }
+}

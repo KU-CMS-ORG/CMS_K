@@ -6,7 +6,7 @@ const debug = Debug("schema-validation");
  * @param {Joi.ObjectSchema<any>} schema
  * @param {{}} data
  */
-function schemaValidate(schema) {
+function schemaValidate(schema, extraParams) {
     return (ctx, next) => {
         const params = ctx.request.params;
         const body = ctx.request.body;
