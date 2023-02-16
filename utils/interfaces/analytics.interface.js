@@ -5,9 +5,20 @@ const totalTransactionSchema = {
     params: Joi.object().keys({
         id: Joi.string().required(),
     }),
-    query: {},
+    query: Joi.object().keys({
+        fromDate: Joi.string().optional(),
+        toDate: Joi.string().optional(),
+    }),
+    body: {},
+};
+const totalTransactionByMonthSchema = {
+    params: Joi.object().keys({
+        id: Joi.string().required(),
+    }),
+
     body: {},
 };
 module.exports = {
     totalTransactionSchema,
+    totalTransactionByMonthSchema,
 };
