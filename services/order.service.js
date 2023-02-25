@@ -6,35 +6,36 @@ const { PrismaClient, PaymentStatus } = require("@prisma/client");
 const prisma = new PrismaClient();
 /**
  *
- * @param {{userId: String, foodId: Number, checkoutPrice: Number, tranDesc?: String, quantity: Int, transStatus: String, paymentDetails?:{paymentMethod?: String, paymentStatus?: String, referenceId?: String}}} transactionDetails
+ * @param {{userId: String, foodDetails: [{foodId: Number, checkoutPrice: Number,quantity: Int}], tranDesc?: String, transStatus: String, paymentDetails?:{paymentMethod?: String, paymentStatus?: String, referenceId?: String}}} transactionDetails
  * @returns
  */
 async function create(transactionDetails) {
     // make payment and if payment info then save payment as well
     try {
-        const { paymentDetails, ...rest } = transactionDetails;
-        debug(paymentDetails);
-        return prisma.tblTranHistory.create({
-            data: {
-                ...rest,
-                payment: {
-                    create: {
-                        userId: transactionDetails.userId,
-                        ...(paymentDetails.paymentStatus ===
-                            PaymentStatus.PAID && {
-                            paymentMethod: paymentDetails.paymentMethod,
-                        }),
-                        paymentStatus: paymentDetails.paymentStatus,
-                        ...(paymentDetails.referenceId && {
-                            referenceId: paymentDetails.referenceId,
-                        }),
+        const { paymentDetails, foodDetails, ...rest } = transactionDetails;
+
+        const createBody = foodDetails.map((eachFood) => {
+            return prisma.tblTranHistory.create({
+                data: {
+                    ...eachFood,
+                    ...rest,
+                    payment: {
+                        create: {
+                            userId: transactionDetails.userId,
+                            ...(paymentDetails.paymentStatus ===
+                                PaymentStatus.PAID && {
+                                paymentMethod: paymentDetails.paymentMethod,
+                            }),
+                            paymentStatus: paymentDetails.paymentStatus,
+                            ...(paymentDetails.referenceId && {
+                                referenceId: paymentDetails.referenceId,
+                            }),
+                        },
                     },
                 },
-            },
-            include: {
-                payment: true,
-            },
+            });
         });
+        return await prisma.$transaction(createBody);
     } catch (error) {
         throw error;
     }
@@ -55,7 +56,7 @@ async function findAll(options, filters) {
             prisma.tblTranHistory.findMany({
                 where: whereQuery,
                 include: {
-                    food: false, // change to true in production
+                    food: false,
                 },
                 take: options.limit,
                 skip: (options.page - 1) * options.limit,
