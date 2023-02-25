@@ -37,7 +37,9 @@ async function createOrder(ctx, next) {
         await orderService.create({
             ...createDetails,
         });
-        return (ctx.body = "Order details created successfully");
+        return (ctx.body = JSON.stringify(
+            "Order details created successfully"
+        ));
     } catch (error) {
         throw error;
     }
@@ -60,7 +62,9 @@ async function updateOrderDetail(ctx, next) {
                 ...updateDetails,
             }
         );
-        return (ctx.body = "Order details updated successfully");
+        return (ctx.body = JSON.stringify(
+            "Order details updated successfully"
+        ));
     } catch (error) {
         throw error;
     }

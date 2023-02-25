@@ -70,7 +70,7 @@ async function updateFoodDetail(ctx, next) {
             ...(quantity && { quantity }),
         };
         await foodService.updateFood({ foodId: +params.id }, updateBody);
-        return (ctx.body = "Food details updated successfully");
+        return (ctx.body = JSON.stringify("Food details updated successfully"));
     } catch (error) {
         throw error;
     }
