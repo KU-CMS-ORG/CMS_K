@@ -25,10 +25,14 @@ const createOrderSchema = {
     body: Joi.object()
         .keys({
             userId: Joi.string().required().guid(),
-            foodId: Joi.number().min(0).required(),
+            foodDetails: Joi.array()
+                .items({
+                    foodId: Joi.number().min(0).required(),
+                    quantity: Joi.number().required(),
+                    checkoutPrice: Joi.number().required(),
+                })
+                .required(),
             tranDesc: Joi.string().optional(),
-            quantity: Joi.number().required(),
-            checkoutPrice: Joi.number().required(),
             tranStatus: Joi.string()
                 .valid(
                     TranStatus.CANCELLED,
