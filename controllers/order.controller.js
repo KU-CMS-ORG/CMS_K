@@ -10,9 +10,10 @@ const debug = Debug("order-controller");
 async function fetchAllOrders(ctx, next) {
     try {
         const { limit, page, search } = ctx.request.query;
+        const { id } = ctx.request.params;
         const response = await orderService.findAll(
             { limit: +limit, page: +page },
-            { ...(search && { search }) }
+            { ...(search && { search }), ...(id && { userId: id }) }
         );
         return (ctx.body = response);
     } catch (error) {
@@ -37,7 +38,9 @@ async function createOrder(ctx, next) {
         await orderService.create({
             ...createDetails,
         });
-        return (ctx.body = "Order details created successfully");
+        return (ctx.body = JSON.stringify(
+            "Order details created successfully"
+        ));
     } catch (error) {
         throw error;
     }
@@ -60,7 +63,9 @@ async function updateOrderDetail(ctx, next) {
                 ...updateDetails,
             }
         );
-        return (ctx.body = "Order details updated successfully");
+        return (ctx.body = JSON.stringify(
+            "Order details updated successfully"
+        ));
     } catch (error) {
         throw error;
     }

@@ -56,7 +56,7 @@ async function createMenu(ctx, next) {
                 new Date()
             ),
         });
-        return (ctx.body = "Menu details created successfully");
+        return (ctx.body = JSON.stringify("Menu details created successfully"));
     } catch (error) {
         throw error;
     }
@@ -82,7 +82,7 @@ async function updateMenuDetail(ctx, next) {
                 ...(foods && { foods }),
             }
         );
-        return (ctx.body = "Menu details updated successfully");
+        return (ctx.body = JSON.stringify("Menu details updated successfully"));
     } catch (error) {
         throw error;
     }

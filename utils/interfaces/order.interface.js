@@ -19,16 +19,32 @@ const ordersListSchema = {
     body: {},
 };
 
+const userOrdersListSchema = {
+    params: {
+        id: Joi.string().required().guid(),
+    },
+    query: Joi.object().keys({
+        limit: Joi.number().required().min(0).required(),
+        page: Joi.number().required().min(1).required(),
+        search: Joi.string().optional(),
+    }),
+    body: {},
+};
+
 const createOrderSchema = {
     params: {},
     query: {},
     body: Joi.object()
         .keys({
             userId: Joi.string().required().guid(),
-            foodId: Joi.number().min(0).required(),
+            foodDetails: Joi.array()
+                .items({
+                    foodId: Joi.number().min(0).required(),
+                    quantity: Joi.number().required(),
+                    checkoutPrice: Joi.number().required(),
+                })
+                .required(),
             tranDesc: Joi.string().optional(),
-            quantity: Joi.number().required(),
-            checkoutPrice: Joi.number().required(),
             tranStatus: Joi.string()
                 .valid(
                     TranStatus.CANCELLED,
@@ -137,4 +153,5 @@ module.exports = {
     ordersListSchema,
     editOrderSchema,
     editOrderPaymentStatusSchema,
+    userOrdersListSchema,
 };

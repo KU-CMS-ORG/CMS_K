@@ -12,7 +12,9 @@ const {
     Role,
     Days,
 } = require("@prisma/client");
-const { compareAsc, format } = require("date-fns");
+const { compareAsc, format, addDays } = require("date-fns");
+const httpStatus = require("http-status");
+const ApiError = require("../utils/errorHandler");
 const { getCreatedAtDay } = require("../utils/helpers");
 const prisma = new PrismaClient();
 
@@ -55,7 +57,7 @@ async function findAll(options, filters) {
                 include: {
                     foods: {
                         include: {
-                            food: true,
+                            food: false,
                         },
                     },
                 },
@@ -113,6 +115,15 @@ async function create(menuDetails) {
         const createdAtDay = getCreatedAtDay(
             format(new Date(menuDetails.menuFor), "EEEE")
         );
+        const existingMenu = await prisma.tblMenu.findFirst({
+            where: { menuFor: menuDetails.menuFor },
+        });
+        if (existingMenu) {
+            return new ApiError({
+                message: "A menu already exists for this day.",
+                statusCode: httpStatus.CONFLICT,
+            });
+        }
         const { foods, ...rest } = menuDetails;
         return prisma.tblMenu.create({
             data: {

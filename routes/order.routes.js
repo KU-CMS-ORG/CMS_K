@@ -16,6 +16,12 @@ router.get(
 );
 
 router.get(
+    "/user/:id",
+    schemaValidate(orderSchema.userOrdersListSchema),
+    orderController.fetchAllOrders
+);
+
+router.get(
     "/",
     schemaValidate(orderSchema.ordersListSchema),
     orderController.fetchAllOrders
