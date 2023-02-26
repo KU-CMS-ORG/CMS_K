@@ -44,11 +44,13 @@ async function create(transactionDetails) {
 /**
  * find all menu in the system
  * @param {{limit: Number, page: Number, sortBy?: String, sortType?: String}} options
- * @param {{search?:String}} filters
+ * @param {{search?:String, userId?: String}} filters
  */
 async function findAll(options, filters) {
     try {
-        const whereQuery = {};
+        const whereQuery = {
+            ...(filters.userId && { userId: filters.userId }),
+        };
         const [count, allTransactions] = await prisma.$transaction([
             prisma.tblTranHistory.count({
                 where: whereQuery,
@@ -56,7 +58,8 @@ async function findAll(options, filters) {
             prisma.tblTranHistory.findMany({
                 where: whereQuery,
                 include: {
-                    food: false,
+                    food: true,
+                    payment: true,
                 },
                 take: options.limit,
                 skip: (options.page - 1) * options.limit,

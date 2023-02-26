@@ -19,6 +19,18 @@ const ordersListSchema = {
     body: {},
 };
 
+const userOrdersListSchema = {
+    params: {
+        id: Joi.string().required().guid(),
+    },
+    query: Joi.object().keys({
+        limit: Joi.number().required().min(0).required(),
+        page: Joi.number().required().min(1).required(),
+        search: Joi.string().optional(),
+    }),
+    body: {},
+};
+
 const createOrderSchema = {
     params: {},
     query: {},
@@ -141,4 +153,5 @@ module.exports = {
     ordersListSchema,
     editOrderSchema,
     editOrderPaymentStatusSchema,
+    userOrdersListSchema,
 };

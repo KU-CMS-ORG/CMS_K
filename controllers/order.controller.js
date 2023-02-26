@@ -10,9 +10,10 @@ const debug = Debug("order-controller");
 async function fetchAllOrders(ctx, next) {
     try {
         const { limit, page, search } = ctx.request.query;
+        const { id } = ctx.request.params;
         const response = await orderService.findAll(
             { limit: +limit, page: +page },
-            { ...(search && { search }) }
+            { ...(search && { search }), ...(id && { userId: id }) }
         );
         return (ctx.body = response);
     } catch (error) {
