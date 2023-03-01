@@ -1,5 +1,6 @@
 const { Faculty, UserStatus, Role } = require("@prisma/client");
 const Joi = require("joi");
+const { ALLOWED_ORDERBY } = require("../../constants/app.constants");
 
 const userDetailSchema = {
     params: Joi.object().keys({
@@ -9,12 +10,28 @@ const userDetailSchema = {
     body: {},
 };
 
+const allowedSort = [
+    "createdAt:asc",
+    "createdAt:desc",
+    "rollId:asc",
+    "rollId:desc",
+    "faculty:asc",
+    "faculty:desc",
+    "userStatus:asc",
+    "userStatus:desc",
+    "role:asc",
+    "role:desc",
+];
 const usersListSchema = {
     params: {},
     query: Joi.object().keys({
         limit: Joi.number().required().min(0).required(),
         page: Joi.number().required().min(1).required(),
         search: Joi.string().optional(),
+        sort: Joi.alternatives().try(
+            Joi.array().items(Joi.string().valid(...allowedSort)),
+            Joi.string().valid(...allowedSort)
+        ),
     }),
     body: {},
 };
