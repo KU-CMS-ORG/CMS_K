@@ -13,6 +13,8 @@ const USER_STATUS = {
 const FOOD_CATEGORY = ["breakfast", "lunch", "dinner", "beverages", "others"];
 const PAYMENT_STATUS = ["pending", "paid"];
 
+const ALLOWED_ORDERBY = ["asc", "desc"];
+
 module.exports = {
     ROLES,
     USER_STATUS,
@@ -20,4 +22,5 @@ module.exports = {
     FOOD_CATEGORY,
     PAYMENT_TYPES,
     FACULTY,
+    ALLOWED_ORDERBY,
 };
