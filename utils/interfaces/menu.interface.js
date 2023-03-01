@@ -8,6 +8,16 @@ const menuDetailSchema = {
     query: {},
     body: {},
 };
+const allowedSort = [
+    "createdAt:asc",
+    "createdAt:desc",
+    "createdAtDay:asc",
+    "createdAtDay:desc",
+    "menuFor:asc",
+    "menuFor:desc",
+    "foods:asc",
+    "foods:desc",
+];
 
 const menusListSchema = {
     params: {},
@@ -15,6 +25,10 @@ const menusListSchema = {
         limit: Joi.number().required().min(0).required(),
         page: Joi.number().required().min(1).required(),
         search: Joi.string().optional(),
+        sort: Joi.alternatives().try(
+            Joi.array().items(Joi.string().valid(...allowedSort)),
+            Joi.string().valid(...allowedSort)
+        ),
     }),
     body: {},
 };
