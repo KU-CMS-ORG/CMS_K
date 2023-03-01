@@ -38,7 +38,8 @@ model tblUser {
   countryCode     Int?                @db.Int
   role             Role             @default(USER)
   rollId             String?             @db.VarChar(15)
-  faculty          Faculty?            
+  faculty          Faculty?   
+  userImage        String?         
   userStatus      UserStatus           @default(ACTIVE) 
   credential tblCredential?
   tranHistory tblTranHistory[]
@@ -69,6 +70,7 @@ model tblFood {
   price            Decimal
   desc             String?             @db.VarChar(255)
   quantity         Int  @default(1)
+  foodImage       String?
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt
   menu         tblFoodOnMenu[]
