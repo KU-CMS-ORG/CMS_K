@@ -8,13 +8,38 @@ const foodDetailSchema = {
     query: {},
     body: {},
 };
-
+const allowedSort = [
+    "foodId:asc",
+    "foodId:desc",
+    "foodName:asc",
+    "foodName:desc",
+    "foodCategory:asc",
+    "foodCategory:desc",
+    "price:asc",
+    "price:desc",
+    "desc:asc",
+    "desc:desc",
+    "quantity:asc",
+    "quantity:desc",
+    "createdAt:asc",
+    "createdAt:desc",
+    "updatedAt:asc",
+    "updatedAt:desc",
+    "menu:asc",
+    "menu:desc",
+    "tranHistory:asc",
+    "tranHistory:desc",
+];
 const foodsListSchema = {
     params: {},
     query: Joi.object().keys({
         limit: Joi.number().required().min(0).required(),
         page: Joi.number().required().min(1).required(),
         search: Joi.string().optional(),
+        sort: Joi.alternatives().try(
+            Joi.array().items(Joi.string().valid(...allowedSort)),
+            Joi.string().valid(...allowedSort)
+        ),
     }),
     body: {},
 };
