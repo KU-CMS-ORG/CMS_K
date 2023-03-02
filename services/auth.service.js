@@ -110,10 +110,11 @@ async function signup(userDetails) {
             include: { credential: true },
         });
         // create email with new user's credentials
-        return {
-            user: newUser,
-            token: jwtService.createToken(newUser),
-        };
+        // return {
+        //     user: newUser,
+        //     token: jwtService.createToken(newUser),
+        // };
+        return "Registration success! Please login to proceed.";
     } catch (error) {
         throw error;
     }
@@ -169,7 +170,8 @@ async function signin(userDetails) {
         });
         if (!existingUser) {
             throw new ApiError({
-                message: "User not found",
+                message:
+                    "User not found. Please try again with a valid email address.",
                 statusCode: status.NOT_FOUND,
             });
         }
@@ -179,6 +181,7 @@ async function signin(userDetails) {
                 user: {
                     ...existingUser.user,
                     createdAt: existingUser.createdAt,
+                    email: existingUser.email,
                 },
                 token: jwtService.createToken(existingUser),
             };
