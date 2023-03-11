@@ -70,7 +70,7 @@ async function changePassword(ctx, next) {
             oldPassword,
             newPassword,
         });
-        return (ctx.body = "password updated successfully");
+        return (ctx.body = JSON.stringify("password updated successfully"));
     } catch (err) {
         ctx.status = err.statusCode || err.status || 500;
         ctx.body = {
