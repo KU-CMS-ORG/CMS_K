@@ -53,7 +53,11 @@ async function updateUserDetail(ctx, next) {
             rollId,
             userStatus,
             phone,
+            countryCode,
+            countryIsoCode,
+            dateOfBirth,
         } = updateDetails;
+        console.log(updateDetails);
         const updateBody = {
             ...(email && { email }),
             ...(firstName && { firstName }),
@@ -62,10 +66,11 @@ async function updateUserDetail(ctx, next) {
             ...(faculty && { faculty }),
             ...(rollId && { rollId }),
             ...(userStatus && { userStatus }),
-            ...(phone && { phone, code: 977 }),
+            ...(phone && { phone, countryCode, countryIsoCode }),
+            ...(dateOfBirth && { dateOfBirth: new Date(dateOfBirth) }),
         };
         await userService.updateUser({ userId: params.id }, updateBody);
-        return (ctx.body = "User details updated successfully");
+        return (ctx.body = JSON.stringify("User details updated successfully"));
     } catch (error) {
         throw error;
     }

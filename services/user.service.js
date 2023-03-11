@@ -124,7 +124,9 @@ async function updateUser(whereKey, userDetails) {
         return prisma.tblUser.update({
             where: { ...whereKey },
             data: { ...rest, ...credentialUpdate },
-            include: { credential: !!credentialUpdate },
+            ...(credentialUpdate && {
+                include: { credential: !!credentialUpdate },
+            }),
         });
     } catch (error) {
         throw error;

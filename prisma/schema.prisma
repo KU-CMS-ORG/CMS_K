@@ -35,9 +35,11 @@ model tblUser {
   middleName           String?             @db.VarChar(100)
   lastName           String?             @db.VarChar(100)
   phone            String?             @unique @db.VarChar(10)
-  countryCode     Int?                @db.Int
+  countryCode     String?                @db.VarChar(5)
+  countryIsoCode String?            @db.VarChar(5)
   role             Role             @default(USER)
   rollId             String?             @db.VarChar(15)
+  dateOfBirth  DateTime? @db.Date
   faculty          Faculty?            
   userStatus      UserStatus           @default(ACTIVE) 
   credential tblCredential?
@@ -89,7 +91,7 @@ model tblMenu {
   menuId        Int      @id @default(autoincrement())
   isAvailable   Boolean
   createdAtDay Days
-  menuFor DateTime @default(now()) @unique
+  menuFor DateTime @unique @db.Date
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   foods tblFoodOnMenu[]
