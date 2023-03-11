@@ -15,4 +15,6 @@ router.get(
     analyticsController.getTotalTransaction
 );
 
+router.get("/analytics/:id", analyticsController.getAnalytics);
+
 module.exports = router.routes();

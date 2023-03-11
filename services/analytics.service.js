@@ -38,4 +38,17 @@ async function getTotalTransaction({ fromDate, toDate }) {
 //     });
 //     return { totalPrice: total._sum.checkoutPrice };
 // }
+
+async function getAnalyticsInfo(id) {
+    try {
+        const userDetails = await prisma.tblUser.findFirst({
+            where: { userId: id },
+            include: { tranHistory: true },
+        });
+
+        // return userDetails like name, email and from tran history, find all data with pending, paid, total orders,
+    } catch (error) {
+        throw error;
+    }
+}
 module.exports = { getTotalTransaction };

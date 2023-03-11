@@ -34,6 +34,15 @@ async function getTotalTransactionByMonth(ctx, next) {
     }
 }
 
+async function getAnalytics(ctx, next) {
+    try {
+        const { id } = ctx.req.params;
+        const response = await analyticsService.getAnalyticsInfo(id);
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     getTotalTransaction,
     getTotalTransactionByMonth,
