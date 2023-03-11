@@ -19,10 +19,15 @@ function fetchPaymentMethods(ctx, next) {
     return (ctx.body = configService.fetchPaymentMethod());
 }
 
+function fetchFaculties(ctx, next) {
+    return (ctx.body = configService.fetchFaculties());
+}
+
 module.exports = {
     fetchAppRoles,
     fetchPaymentStatuses,
     fetchFoodCategories,
     fetchTransactionStatuses,
     fetchPaymentMethods,
+    fetchFaculties,
 };
