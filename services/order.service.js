@@ -137,4 +137,46 @@ async function update(whereKey, orderDetails) {
     }
 }
 
-module.exports = { create, findDetail, findAll, update };
+/**
+ * bulk updates orders with same data
+ * @param {{tranId:[number]}} whereKey
+ * @param {tranDesc?: String, transStatus?: String, paymentDetails: {paymentStatus: String, referenceId?: String, paymentMethod?: String}}} orderDetails
+ * @returns
+ */
+async function updateMany(whereKey, orderDetails) {
+    const where = {
+        ...(whereKey.tranId && { tranId: { in: whereKey.tranId } }),
+    };
+    try {
+        const { paymentDetails, ...rest } = orderDetails;
+        const updateBody = whereKey.tranId.map((eachTranId) =>
+            prisma.tblTranHistory.update({
+                where: { tranId: eachTranId },
+                data: {
+                    ...rest,
+                    ...(paymentDetails && {
+                        payment: {
+                            update: {
+                                ...(paymentDetails.paymentStatus ===
+                                    PaymentStatus.PAID && {
+                                    paymentMethod: paymentDetails.paymentMethod,
+                                }),
+                                paymentStatus: paymentDetails.paymentStatus,
+                                ...(paymentDetails.referenceId && {
+                                    referenceId: paymentDetails.referenceId,
+                                }),
+                            },
+                        },
+                    }),
+                },
+                include: {
+                    payment: true,
+                },
+            })
+        );
+        return prisma.$transaction(updateBody);
+    } catch (error) {
+        throw error;
+    }
+}
+module.exports = { create, findDetail, findAll, update, updateMany };

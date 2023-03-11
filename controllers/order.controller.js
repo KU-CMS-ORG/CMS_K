@@ -54,7 +54,6 @@ async function createOrder(ctx, next) {
  */
 async function updateOrderDetail(ctx, next) {
     try {
-        const { id } = ctx.request.params;
         const updateDetails = ctx.request.body;
         debug(updateDetails);
         await orderService.update(
@@ -71,9 +70,34 @@ async function updateOrderDetail(ctx, next) {
     }
 }
 
+/**
+ * updates the order status of any given order
+ * @param {*} ctx
+ * @param {*} next
+ * @returns
+ */
+async function bulkUpdateOrderDetail(ctx, next) {
+    try {
+        const updateDetails = ctx.request.body;
+        const { id, ...rest } = updateDetails;
+        await orderService.updateMany(
+            { tranId: id },
+            {
+                ...rest,
+            }
+        );
+        return (ctx.body = JSON.stringify(
+            "Order details updated successfully"
+        ));
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     fetchAllOrders,
     fetchOrderDetails,
     createOrder,
     updateOrderDetail,
+    bulkUpdateOrderDetail,
 };

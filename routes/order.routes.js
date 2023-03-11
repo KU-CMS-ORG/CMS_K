@@ -27,15 +27,17 @@ router.get(
     orderController.fetchAllOrders
 );
 
+//only available to admin
+router.patch(
+    "/change-payment-status",
+    schemaValidate(orderSchema.editOrderPaymentStatusSchema),
+    orderController.bulkUpdateOrderDetail
+);
+
 router.patch(
     "/:id",
     schemaValidate(orderSchema.editOrderSchema),
     orderController.updateOrderDetail
 );
-//only available to admin
-router.patch(
-    "/change-payment-status/:id",
-    schemaValidate(orderSchema.editOrderPaymentStatusSchema),
-    orderController.updateOrderDetail
-);
+
 module.exports = router.routes();
