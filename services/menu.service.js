@@ -13,6 +13,7 @@ const {
     Days,
 } = require("@prisma/client");
 const { compareAsc, format, addDays } = require("date-fns");
+const { NOT_FOUND } = require("http-status");
 const httpStatus = require("http-status");
 const ApiError = require("../utils/errorHandler");
 const { getCreatedAtDay } = require("../utils/helpers");
@@ -20,12 +21,12 @@ const prisma = new PrismaClient();
 
 /**
  * gets menu detail by id
- * @param {{menuId: Number}} whereKey
+ * @param {{menuId?: Number, menuFor?: Date}} whereKey
  * @returns food detail if found
  */
 async function findDetail(whereKey) {
     try {
-        return prisma.tblMenu.findUnique({
+        const menuDetail = await prisma.tblMenu.findUnique({
             where: whereKey,
             include: {
                 foods: {
@@ -35,6 +36,24 @@ async function findDetail(whereKey) {
                 },
             },
         });
+
+        if (!menuDetail) {
+            throw new ApiError({
+                message: "Menu not found",
+                statusCode: NOT_FOUND,
+            });
+        }
+        const { foods, ...rest } = menuDetail;
+        return {
+            ...rest,
+            foods: foods.map((eachFood) => {
+                const { food, ...restOfFood } = eachFood;
+                return {
+                    ...restOfFood,
+                    ...food,
+                };
+            }),
+        };
     } catch (error) {
         throw error;
     }

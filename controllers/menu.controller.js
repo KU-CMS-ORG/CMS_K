@@ -31,7 +31,13 @@ async function fetchAllMenus(ctx, next) {
 async function fetchMenuDetails(ctx, next) {
     try {
         const { id } = ctx.request.params;
-        const response = await menuService.findDetail({ menuId: +id });
+        const whereKey = {};
+        if (Date.parse(id) && isNaN(id)) {
+            whereKey.menuFor = new Date(id);
+        } else {
+            whereKey.menuId = +id;
+        }
+        const response = await menuService.findDetail(whereKey);
         return (ctx.body = response);
     } catch (error) {
         throw error;

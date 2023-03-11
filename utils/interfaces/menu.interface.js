@@ -3,7 +3,7 @@ const Joi = require("joi");
 
 const menuDetailSchema = {
     params: Joi.object().keys({
-        id: Joi.number().required(),
+        id: Joi.alternatives().try(Joi.number(), Joi.date()).required(),
     }),
     query: {},
     body: {},
@@ -42,7 +42,7 @@ const editMenuSchema = {
     query: {},
     body: Joi.object()
         .keys({
-            menuFor: Joi.date().optional().min("now").iso(),
+            menuFor: Joi.date().optional().min("now"),
             foods: Joi.array()
                 .items(
                     Joi.object().keys({
@@ -59,7 +59,7 @@ const createMenuSchema = {
     query: {},
     body: Joi.object()
         .keys({
-            menuFor: Joi.date().required().min("now").iso(),
+            menuFor: Joi.date().required().min("now"),
             foods: Joi.array()
                 .items(
                     Joi.object().keys({
