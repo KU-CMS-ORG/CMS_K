@@ -18,7 +18,17 @@ const totalTransactionByMonthSchema = {
 
     body: {},
 };
+
+const analyticsSchema = {
+    params: Joi.object().keys({
+        id: Joi.string().required(),
+    }),
+
+    body: {},
+    query: {},
+};
 module.exports = {
     totalTransactionSchema,
     totalTransactionByMonthSchema,
+    analyticsSchema,
 };

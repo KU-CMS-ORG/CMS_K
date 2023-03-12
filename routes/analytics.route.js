@@ -15,4 +15,10 @@ router.get(
     analyticsController.getTotalTransaction
 );
 
+router.get(
+    "/:id",
+    schemaValidate(totalTransactionSchema.analyticsSchema),
+    analyticsController.getAnalytics
+);
+
 module.exports = router.routes();
