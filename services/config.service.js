@@ -4,6 +4,7 @@ const {
     PaymentStatus,
     PaymentMethod,
     TranStatus,
+    Faculty,
 } = require("@prisma/client");
 
 function fetchFoodCategories() {
@@ -40,10 +41,18 @@ function fetchTransactionStatus() {
     }));
 }
 
+function fetchFaculties() {
+    return Object.keys(Faculty).map((eachKey) => ({
+        label: eachKey,
+        value: Faculty[eachKey],
+    }));
+}
+
 module.exports = {
     fetchFoodCategories,
     fetchPaymentMethod,
     fetchPaymentStatus,
     fetchRoles,
     fetchTransactionStatus,
+    fetchFaculties,
 };

@@ -1,4 +1,11 @@
-const { PrismaClient, Prisma, UserStatus, Role } = require("@prisma/client");
+const {
+    PrismaClient,
+    Prisma,
+    UserStatus,
+    Role,
+    PaymentStatus,
+} = require("@prisma/client");
+const ApiError = require("@utils/errorHandler");
 const { NOT_FOUND } = require("http-status");
 const prisma = new PrismaClient();
 const ApiError = require("../utils/errorHandler");
@@ -11,7 +18,7 @@ const ApiError = require("../utils/errorHandler");
 async function findDetail(whereKey) {
     try {
         // find one user and return it
-        const result = await prisma.tblUser.findUnique({
+        const existingUser = await prisma.tblUser.findUnique({
             where: whereKey,
             include: {
                 credential: {
@@ -25,14 +32,29 @@ async function findDetail(whereKey) {
             },
         });
 
-        if (!result) {
+        if (!existingUser) {
             throw new ApiError({
-                message: "could not find the selected user",
+                message: "User not found",
                 statusCode: NOT_FOUND,
             });
         }
-        const { credential, ...rest } = result;
-        return { ...rest, ...credential };
+        const { credential, tranHistory, ...rest } = existingUser;
+
+        const amountRemaining = tranHistory
+            .filter(
+                (eachTran) =>
+                    eachTran.payment.paymentStatus === PaymentStatus.PENDING
+            )
+            .reduce((acc, current, index) => {
+                return acc + current.checkoutPrice * current.quantity;
+            }, 0);
+
+        return {
+            ...rest,
+            tranHistory,
+            email: credential.email,
+            amountRemaining,
+        };
     } catch (error) {
         throw error;
     }
@@ -124,7 +146,9 @@ async function updateUser(whereKey, userDetails) {
         return prisma.tblUser.update({
             where: { ...whereKey },
             data: { ...rest, ...credentialUpdate },
-            include: { credential: !!credentialUpdate },
+            ...(credentialUpdate && {
+                include: { credential: !!credentialUpdate },
+            }),
         });
     } catch (error) {
         throw error;

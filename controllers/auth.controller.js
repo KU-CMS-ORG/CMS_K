@@ -13,7 +13,7 @@ async function signup(ctx, next) {
                 email,
                 password,
             });
-            return (ctx.body = response);
+            return (ctx.body = JSON.stringify(response));
         }
         //check if user already exists, if not add new user, if yes return message saying email or id already exists
     } catch (err) {
@@ -70,7 +70,7 @@ async function changePassword(ctx, next) {
             oldPassword,
             newPassword,
         });
-        return (ctx.body = "password updated successfully");
+        return (ctx.body = JSON.stringify("password updated successfully"));
     } catch (err) {
         ctx.status = err.statusCode || err.status || 500;
         ctx.body = {

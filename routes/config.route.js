@@ -9,5 +9,6 @@ router.get("/payment-methods", configController.fetchAppRoles);
 router.get("/transaction-statuses", configController.fetchTransactionStatuses);
 router.get("/food-categories", configController.fetchFoodCategories);
 router.get("/payment-statuses", configController.fetchPaymentStatuses);
+router.get("/faculties", configController.fetchFaculties);
 
 module.exports = router.routes();

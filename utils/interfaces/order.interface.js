@@ -143,14 +143,11 @@ const editOrderSchema = {
 };
 
 const editOrderPaymentStatusSchema = {
-    params: Joi.object()
-        .keys({
-            id: Joi.number().required(),
-        })
-        .required(),
+    params: {},
     query: {},
     body: Joi.object()
         .keys({
+            id: Joi.array().items(Joi.number().required()).required(),
             paymentDetails: Joi.object()
                 .keys({
                     paymentMethod: Joi.string()

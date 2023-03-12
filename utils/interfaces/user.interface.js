@@ -49,7 +49,18 @@ const editUserSchema = {
         middleName: Joi.string().optional(),
         email: Joi.string().email().optional(),
         phone: Joi.string().optional(),
+        countryCode: Joi.string().when("phone", {
+            is: Joi.exist(),
+            then: Joi.required(),
+            otherwise: Joi.optional(),
+        }),
+        countryIsoCode: Joi.string().when("phone", {
+            is: Joi.exist(),
+            then: Joi.required(),
+            otherwise: Joi.optional(),
+        }),
         rollId: Joi.string().optional(),
+        dateOfBirth: Joi.date().optional(),
         userStatus: Joi.string()
             .valid(UserStatus.ACTIVE, UserStatus.CLOSED, UserStatus.INACTIVE)
             .optional(),
