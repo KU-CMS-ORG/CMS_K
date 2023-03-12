@@ -8,7 +8,6 @@ const {
 const ApiError = require("@utils/errorHandler");
 const { NOT_FOUND } = require("http-status");
 const prisma = new PrismaClient();
-const ApiError = require("../utils/errorHandler");
 
 /**
  *get detail of user by id or email
